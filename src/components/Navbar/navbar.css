@@ -1,0 +1,339 @@
+/* Navbar Styles */
+.navbar {
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+    background: var(--primary-background-color);
+    transition: all 0.3s ease;
+}
+
+/* Style to make the navbar sticky when it is scrolled. */
+.non-scrolled-navbar {
+    position: relative;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.scrolled-navbar {
+    position: fixed;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 40px;
+    transition: all 0.3s ease;
+}
+
+.navbar-logo {
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.navbar-logo-image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.navbar-logo-image {
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.navbar-links-container {
+    display: flex;
+    align-items: center;
+    gap: 35px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+    justify-content: center;
+}
+
+.navbar-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-decoration: none;
+    padding: 10px 15px 5px 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.navbar-link:hover {
+    color: #36daef;
+}
+
+.navbar-link-active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 15px;
+    right: 15px;
+    height: 2px;
+    background: #36daef;
+    border-radius: 2px;
+}
+
+.navbar-theme-controller {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-theme-toggle-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #d9dee7;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-theme-single-icon {
+    color: #000000;
+    transition: all 0.3s ease;
+}
+
+/* Mobile Menu Toggle */
+.navbar-mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 1002;
+    color: var(--primary-color);
+}
+
+.navbar-mobile-toggle:hover {
+    opacity: 0.7;
+}
+
+/* Mobile Sidebar */
+.navbar-mobile-sidebar {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    height: 100vh;
+    background: var(--primary-background-color);
+    box-shadow: -5px 0 30px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+}
+
+.navbar-mobile-sidebar-active {
+    right: 0;
+}
+
+/* Sidebar Header */
+.navbar-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 25px;
+    background: var(--primary-background-color);
+}
+
+.navbar-sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.navbar-sidebar-logo-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.navbar-sidebar-logo-image img {
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.navbar-sidebar-close {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.navbar-sidebar-close:hover {
+    background: rgba(0, 0, 0, 0.05);
+    transform: rotate(90deg);
+}
+
+/* Sidebar Links */
+.navbar-sidebar-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+}
+
+.navbar-sidebar-links li {
+    margin: 0;
+}
+
+.navbar-sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 20px 25px;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.navbar-sidebar-link:hover {
+    background: var(--secondary-background-color);
+}
+
+.navbar-sidebar-link-active {
+    color: #36daef;
+    font-weight: 600;
+}
+
+/* Sidebar Theme Section */
+.navbar-sidebar-theme {
+    padding: 0;
+    margin: 0;
+    background: var(--primary-background-color);
+}
+
+.navbar-sidebar-theme-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 25px;
+    width: 100%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--primary-color);
+    text-align: left;
+}
+
+.navbar-sidebar-theme-option:last-child {
+    border-bottom: none;
+}
+
+.navbar-sidebar-theme-option-active {
+    color: #0066CC;
+    font-weight: 600;
+}
+
+.navbar-sidebar-theme-option svg {
+    flex-shrink: 0;
+}
+
+/* Hide Desktop/Mobile Elements */
+.navbar-desktop-only {
+    display: flex;
+}
+
+.navbar-mobile-only {
+    display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+    .navbar-container {
+        padding: 15px 30px;
+    }
+
+    .navbar-links-container {
+        gap: 25px;
+    }
+
+    .navbar-link {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+
+    .navbar-theme-toggle-circle {
+        width: 45px;
+        height: 45px;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-container {
+        padding: 15px 25px;
+    }
+
+    .navbar-desktop-only {
+        display: none !important;
+    }
+
+    .navbar-mobile-only {
+        display: flex;
+    }
+
+    .navbar-mobile-toggle {
+        display: flex;
+    }
+
+    .navbar-mobile-sidebar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-container {
+        padding: 12px 20px;
+    }
+
+    .navbar-sidebar-header {
+        padding: 18px 20px;
+    }
+
+    .navbar-sidebar-link {
+        padding: 12px 20px;
+        font-size: 0.95rem;
+    }
+
+    .navbar-sidebar-theme-option {
+        padding: 18px 20px;
+        font-size: 0.95rem;
+    }
+}
