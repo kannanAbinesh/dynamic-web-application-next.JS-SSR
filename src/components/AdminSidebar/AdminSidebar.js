@@ -13,9 +13,16 @@ import logoImage from '../../askLogo.jpg';
 import './adminSidebar.css';
 
 const AdminSidebar = (props) => {
-
     /* Props. */
-    const { userDetails = { name: 'Admin User', _id: '1' }, siteSettings = {}, theme = 'light', onToggleTheme, onLogout, isSidebarOpen = false, onToggleSidebar } = props;
+    const {
+        userDetails = { name: 'Admin User', _id: '1' },
+        siteSettings = {},
+        theme = 'light',
+        onToggleTheme,
+        onLogout,
+        isSidebarOpen = false,
+        onToggleSidebar
+    } = props;
 
     /* State. */
     const [isDesktop, setIsDesktop] = useState(true);
@@ -30,6 +37,7 @@ const AdminSidebar = (props) => {
             const desktop = window.innerWidth > 768;
             setIsDesktop(desktop);
         };
+
         handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
@@ -37,7 +45,10 @@ const AdminSidebar = (props) => {
 
     const isFocusedPath = (path) => pathname === path;
 
-    const siteLogo = siteSettings?.data?.[theme === 'dark' ? 'darkThemeLogo' : 'logo']?.value ? `/uploads/siteSettings/${siteSettings?.data[theme === 'dark' ? 'darkThemeLogo' : 'logo']?.value}` : null;
+    const siteLogo = siteSettings?.data?.[theme === 'dark' ? 'darkThemeLogo' : 'logo']?.value
+        ? `/uploads/siteSettings/${siteSettings?.data[theme === 'dark' ? 'darkThemeLogo' : 'logo']?.value}`
+        : null;
+
     const siteName = siteSettings?.data?.siteName?.value || 'Admin Portal';
 
     const handleNavigate = (path) => {
@@ -55,18 +66,17 @@ const AdminSidebar = (props) => {
 
     const renderSidebarContent = () => {
         return (
-            <div className='sidebar-container'>
-                <div className='sidebar-header'>
+            <div className="sidebar-container">
+                <div className="sidebar-header">
                     <div
-                        className='sidebar-header-link'
+                        className="sidebar-header-link"
                         onClick={() => handleNavigate('/siteadmin/sitesettings')}
                     >
-                        {/* {siteLogo ? ( */}
-                        <div className='sidebar-logo-wrapper'>
+                        <div className="sidebar-logo-wrapper">
                             <Image
-                                className='sidebar-logo'
-                                src={logoImage}
-                                alt='logo'
+                                src={siteLogo || logoImage}
+                                alt="Site Logo"
+                                className="sidebar-logo"
                                 width={160}
                                 height={70}
                                 onLoad={() => setLogoLoaded(true)}
@@ -78,81 +88,102 @@ const AdminSidebar = (props) => {
                                 priority
                             />
                         </div>
-                        {/* ) : (
-                            <span className='sidebar-site-name'>{siteName}</span>
-                        )} */}
                     </div>
-                    <div style={{ textAlign: 'center' }}>
-                        <span className='sidebar-welcome-text'>Welcome admin</span>
+
+                    <div className="sidebar-welcome-wrapper">
+                        <span className="sidebar-welcome-text">Welcome admin</span>
                     </div>
                 </div>
 
-                <div className='sidebar-body'>
-                    <nav className='sidebar-nav'>
+                <div className="sidebar-body">
+                    <nav className="sidebar-nav">
                         {adminSideBarData?.map((item, index) => (
                             <div
                                 key={index}
-                                className={`sidebar-nav-item ${isFocusedPath(item?.path) ? 'sidebar-nav-item-active' : ''}`}
+                                className={`sidebar-nav-item ${isFocusedPath(item?.path) ? 'sidebar-nav-item-active' : ''
+                                    }`}
                                 onClick={() => handleNavigate(item?.path)}
                             >
-                                <div className='sidebar-nav-icon'>
-                                    {item?.icon}
-                                </div>
-                                <span className='sidebar-nav-text'>{item?.name}</span>
-                                {isFocusedPath(item?.path) && (
-                                    <div className='sidebar-nav-indicator'></div>
-                                )}
+                                <div className="sidebar-nav-icon">{item?.icon}</div>
+                                <span className="sidebar-nav-text">{item?.name}</span>
                             </div>
                         ))}
                     </nav>
 
-                    <div className='sidebar-actions'>
-                        <div className='sidebar-nav-item' onClick={handleThemeToggle}>
-                            <div className='sidebar-nav-icon'>
+                    <div className="sidebar-actions">
+                        <div
+                            className="sidebar-nav-item"
+                            onClick={handleThemeToggle}
+                        >
+                            <div className="sidebar-nav-icon">
                                 {theme === 'light' ? (
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={1.5}
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"
+                                        />
                                     </svg>
                                 ) : (
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <circle cx="12" cy="12" r="5"></circle>
-                                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={1.5}
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                                        />
                                     </svg>
                                 )}
                             </div>
-                            <span className='sidebar-nav-text'>
+                            <span className="sidebar-nav-text">
                                 {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
                             </span>
                         </div>
 
                         {userDetails?._id && (
-                            <div className='sidebar-nav-item' onClick={handleLogout}>
-                                <div className='sidebar-nav-icon'>
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                        <polyline points="16 17 21 12 16 7"></polyline>
-                                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                            <div
+                                className="sidebar-nav-item"
+                                onClick={handleLogout}
+                            >
+                                <div className="sidebar-nav-icon">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={1.5}
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+                                        />
                                     </svg>
                                 </div>
-                                <span className='sidebar-nav-text'>Logout</span>
+                                <span className="sidebar-nav-text">Logout</span>
                             </div>
                         )}
                     </div>
                 </div>
 
                 {isDesktop && (
-                    <div className='sidebar-footer'>
-                        <span className='sidebar-footer-text'>
-                            © {new Date().getFullYear()} <strong>{siteSettings?.data?.poweredBy?.value || 'Admin Portal'}</strong>
-                        </span>
-                        <span className='sidebar-footer-subtext'>All rights reserved</span>
+                    <div className="sidebar-footer">
+                        <p className="sidebar-footer-text">
+                            <strong>© {new Date().getFullYear()}</strong>{' '}
+                            {siteSettings?.data?.poweredBy?.value || 'Admin Portal'}
+                        </p>
+                        <p className="sidebar-footer-subtext">All rights reserved</p>
                     </div>
                 )}
             </div>
@@ -165,20 +196,60 @@ const AdminSidebar = (props) => {
                 renderSidebarContent()
             ) : (
                 <>
+                    <button
+                        className="sidebar-mobile-toggle"
+                        onClick={onToggleSidebar}
+                        aria-label="Toggle Sidebar"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                            width={24}
+                            height={24}
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                            />
+                        </svg>
+                    </button>
+
                     {isSidebarOpen && (
                         <div
-                            className='sidebar-overlay'
+                            className="sidebar-overlay"
                             onClick={onToggleSidebar}
-                        />
+                        ></div>
                     )}
 
-                    <div className={`sidebar-mobile ${isSidebarOpen ? 'sidebar-mobile-open' : ''}`}>
-                        <div className='sidebar-mobile-close' onClick={onToggleSidebar}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                    <div
+                        className={`sidebar-mobile ${isSidebarOpen ? 'sidebar-mobile-open' : ''
+                            }`}
+                    >
+                        <button
+                            className="sidebar-mobile-close"
+                            onClick={onToggleSidebar}
+                            aria-label="Close Sidebar"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={2}
+                                stroke="currentColor"
+                                width={24}
+                                height={24}
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
                             </svg>
-                        </div>
+                        </button>
                         {renderSidebarContent()}
                     </div>
                 </>
