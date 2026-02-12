@@ -8,14 +8,12 @@ export default function Queries(props) {
 
     return (
         <div>
-
             <CommonTable
                 data={data}
                 tableType={tableType}
                 tableHeader={tableHeader}
                 currentPage={page}
             />
-
         </div>
     )
 }

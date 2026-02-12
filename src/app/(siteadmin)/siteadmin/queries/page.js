@@ -21,7 +21,7 @@ export default async function QueriesPage({ searchParams }) {
     let page = toInt(searchParams?.page, 1);
     let limit = 10;
     let search = (searchParams?.search || "").toString().trim();
-    let filter = search ? { $or: [{ title: { $regex: search, $options: "i" } }, { message: { $regex: search, $options: "i" } },] } : {};
+    let filter = search ? { $or: [{ name: { $regex: search, $options: "i" } }, { message: { $regex: search, $options: "i" } },] } : {};
     let skip = (page - 1) * limit;
 
     await dbConnect(); /* Connect DB. */
@@ -32,11 +32,20 @@ export default async function QueriesPage({ searchParams }) {
         Queries.countDocuments(filter),
     ]);
     const totalPages = Math.max(1, Math.ceil(total / limit));
-    const data = queries.map((ele) => ({ id: ele._id.toString(), name: ele.name, message: ele.message, createdAt: ele.createdAt }));
+
+    // Serialize the data properly for Client Component
+    const data = queries.map((ele) => ({
+        id: ele._id.toString(),
+        name: ele.name,
+        email: ele.email || '',
+        message: ele.message,
+        createdAt: ele.createdAt ? new Date(ele.createdAt).toISOString() : null,
+        updatedAt: ele.updatedAt ? new Date(ele.updatedAt).toISOString() : null
+    }));
 
     return (
         <QueriesClient
-            data={queries}
+            data={data}
             page={page}
             totalPages={totalPages}
             search={search}
