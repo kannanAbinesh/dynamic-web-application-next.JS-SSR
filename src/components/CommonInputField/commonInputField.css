@@ -1,0 +1,34 @@
+.input-container {
+    font-family: 'LEXEND' !important;
+    text-align: left;
+    position: relative;
+}
+
+.form-input-label {
+    color: #333;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+}
+
+.form-input {
+    width: 100%;
+    height: 45px;
+    font-size: 16px !important;
+    font-weight: 400;
+    color: var(--primary-color);
+    padding: 10px 15px;
+    line-height: 24px;
+    background-color: var(--primary-background-color);
+    border: 1px solid var(--field-primary-border-color);
+    font-family: 'LEXEND';
+    border-radius: 4px;
+}
+
+.form-input::placeholder {
+    font-family: 'LEXEND';
+    color: var(--tertiary-color);
+}

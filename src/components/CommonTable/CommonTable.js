@@ -14,14 +14,14 @@ import './commonTable.css';
 export default function CommonTable(props) {
 
     /* Props. */
-    const { data, tableType, tableHeader, currentPage, onSearch } = props;
+    const { data, tableType, tableHeader, currentPage, search } = props;
 
     /* Hooks. */
     const router = useRouter();
     const searchParams = useSearchParams();
 
     /* State declarations. */
-    const [inputValue, setInputValue] = useState(searchParams.get('search') || '');
+    const [inputValue, setInputValue] = useState(search);
 
     /* Search functionalities. */
     const debounceTimeout = useRef(null);
@@ -40,7 +40,6 @@ export default function CommonTable(props) {
         else params.set('search', searchValue);
 
         router.push(`?${params.toString()}`, { scroll: false });
-        if (onSearch) onSearch(searchValue);
     };
 
     const debounceSearch = debounce((value) => { handleSearchData(value) }, 500);
@@ -53,7 +52,7 @@ export default function CommonTable(props) {
 
     // Sync input value with URL search params
     useEffect(() => {
-        const urlSearch = searchParams.get('search') || '';
+        const urlSearch = search;
         setInputValue(urlSearch);
     }, [searchParams]);
 
@@ -87,7 +86,7 @@ export default function CommonTable(props) {
                         <tbody className='common-table-body-wrapper'>
                             {data.map((ele, index) => (
                                 <tr className='common-table-row' key={index}>
-                                    <td className='common-table-data' data-cell="S.no">{(currentPage * 10) + index + 1}</td>
+                                    <td className='common-table-data' data-cell="S.no">{((currentPage - 1) * 10) + index + 1}</td>
 
                                     {ele?.name && (<td className='common-table-data' data-cell="name">{ele?.name}</td>)}
 

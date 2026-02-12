@@ -1,6 +1,5 @@
 /* Site settings container */
 .site-settings-container {
-    padding: 20px;
     margin: 0 auto;
 }
 
@@ -243,6 +242,7 @@
     color: #dc3545;
     font-size: 12px;
     margin-top: 4px;
+    display: block;
 }
 
 /* Submit Section */
@@ -292,9 +292,6 @@
 
 /* Responsive Styles */
 @media screen and (max-width: 768px) {
-    .site-settings-container {
-        padding: 15px;
-    }
 
     .image-grid {
         grid-template-columns: 1fr;
@@ -318,10 +315,6 @@
 }
 
 @media screen and (max-width: 480px) {
-    .site-settings-container {
-        padding: 10px;
-    }
-
     .section-title {
         font-size: 16px;
     }

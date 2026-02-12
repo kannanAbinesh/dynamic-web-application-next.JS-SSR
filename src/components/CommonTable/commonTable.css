@@ -227,3 +227,8 @@
     line-height: 1.5;
     padding: 0;
 }
+
+.common-table-search-input-field::placeholder {
+    font-family: 'LEXEND';
+    color: var(--primary-color);
+}

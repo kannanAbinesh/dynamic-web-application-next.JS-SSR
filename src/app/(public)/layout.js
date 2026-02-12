@@ -8,11 +8,12 @@ export const metadata = { title: "My app", description: "My app" };
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
+      {/* Add suppressHydrationWarning here */}
+      <body suppressHydrationWarning className="your-font-class">
         <Navbar />
         {children}
         <Footer />
       </body>
     </html>
   );
-};
+}

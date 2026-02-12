@@ -149,6 +149,7 @@
 .sidebar-nav-item:hover {
     background: rgba(255, 255, 255, 0.08);
     color: #ffffff;
+    border-radius: 10px;
 }
 
 [data-theme="dark"] .sidebar-nav-item:hover {
@@ -159,6 +160,7 @@
     background: rgba(255, 255, 255, 0.15);
     color: #ffffff;
     font-weight: 600;
+    border-radius: 10px;
 }
 
 [data-theme="dark"] .sidebar-nav-item-active {

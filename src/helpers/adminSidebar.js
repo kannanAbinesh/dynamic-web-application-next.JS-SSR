@@ -11,5 +11,5 @@ export const adminSideBarData = [
     { id: 3, name: "Manage About us", path: "/siteadmin/manage-about-us", icon: (<SiAboutdotme size={25} />) },
     { id: 4, name: "Manage Blogs", path: "/siteadmin/manage-blogs", icon: (<FaBlog size={25} />) },
     { id: 5, name: "Manage Contact us", path: "/siteadmin/manage-contact-us", icon: (<FaPhone size={25} />) },
-    { id: 6, name: "Queries", path: "/siteadmin/queries?page=1&search=''", icon: (<MdFeaturedPlayList size={25} />) }
+    { id: 6, name: "Queries", path: "/siteadmin/queries", icon: (<MdFeaturedPlayList size={25} />) }
 ];

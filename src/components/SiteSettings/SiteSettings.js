@@ -255,21 +255,20 @@ const SiteSettings = (props) => {
                 <div className="settings-section">
                     <div className="form-grid">
                         <div className="form-group">
-                            <label className="form-label">Site Name</label>
                             <Controller
                                 name="siteName"
                                 control={control}
                                 rules={{ required: 'Site name is required' }}
-                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" />)}
+                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" label="Site Name" />)}
                             />
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label">Powered By</label>
                             <Controller
                                 name="poweredBy"
                                 control={control}
-                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" />)}
+                                rules={{ required: 'PoweredBy is required' }}
+                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" label="Powered By" />)}
                             />
                         </div>
                     </div>
@@ -279,47 +278,47 @@ const SiteSettings = (props) => {
                 <div className="settings-section">
                     <div className="form-grid">
                         <div className="form-group">
-                            <label className="form-label">Mail</label>
                             <Controller
-                                name="facebook"
+                                name="mail"
                                 control={control}
-                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" />)}
+                                rules={{ required: 'Mail is required' }}
+                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" label="Mail" />)}
                             />
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label">Facebook</label>
                             <Controller
                                 name="facebook"
+                                rules={{ required: 'Facebook is required' }}
                                 control={control}
-                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" />)}
+                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" label="Facebook" />)}
                             />
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label">Instagram</label>
                             <Controller
                                 name="instagram"
                                 control={control}
-                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" />)}
+                                rules={{ required: 'Instagram is required' }}
+                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" label="Instagram" />)}
                             />
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label">YouTube</label>
                             <Controller
                                 name="youtube"
                                 control={control}
-                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" />)}
+                                rules={{ required: 'Youtube is required' }}
+                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" label="YouTube" />)}
                             />
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label">WhatsApp</label>
                             <Controller
                                 name="whatsapp"
                                 control={control}
-                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" />)}
+                                rules={{ required: 'Whatsapp is required' }}
+                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" label="WhatsApp" />)}
                             />
                         </div>
                     </div>
