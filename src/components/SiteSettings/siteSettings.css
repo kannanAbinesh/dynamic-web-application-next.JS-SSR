@@ -4,10 +4,6 @@
     margin: 0 auto;
 }
 
-* {
-    box-sizing: border-box;
-}
-
 /* Settings Section */
 .settings-section {
     margin-bottom: 40px;

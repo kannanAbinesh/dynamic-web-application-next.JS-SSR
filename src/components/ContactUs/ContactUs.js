@@ -121,15 +121,6 @@ const ContactUs = () => {
                                     ></textarea>
                                 </div>
 
-                                <div className="form-group checkbox-group">
-                                    <label className="checkbox-label">
-                                        <input type="checkbox" className="form-checkbox" required />
-                                        <span className="checkbox-text">
-                                            I have read and agree to the <Link href="/terms" className="terms-link">terms</Link>
-                                        </span>
-                                    </label>
-                                </div>
-
                                 <button type="submit" className="submit-button">
                                     <span>Send message</span>
                                     <Send size={18} />

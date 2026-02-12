@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { User, Lock } from 'lucide-react';
 import { showToast } from 'nextjs-toast-notify';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 /* Styles. */
 import './adminLogin.css';
@@ -87,7 +88,14 @@ const AdminLogin = () => {
             </div>
 
             <div className="login-right-section">
-                <img src="https://images.unsplash.com/photo-1605640840605-14ac1855827b?w=1200&h=1600&fit=crop" alt="Mountain church scenery" className="login-bg-image" />
+                <Image
+                    src="/images/superadminLoginBanner.svg"
+                    className='login-bg-image'
+                    alt="logo"
+                    width={50}
+                    height={50}
+                    priority
+                />
             </div>
         </div>
     );
