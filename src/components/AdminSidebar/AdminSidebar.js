@@ -13,6 +13,7 @@ import logoImage from '../../askLogo.jpg';
 import './adminSidebar.css';
 
 const AdminSidebar = (props) => {
+
     /* Props. */
     const {
         userDetails = { name: 'Admin User', _id: '1' },
@@ -100,8 +101,7 @@ const AdminSidebar = (props) => {
                         {adminSideBarData?.map((item, index) => (
                             <div
                                 key={index}
-                                className={`sidebar-nav-item ${isFocusedPath(item?.path) ? 'sidebar-nav-item-active' : ''
-                                    }`}
+                                className={`sidebar-nav-item ${isFocusedPath(item?.path) ? 'sidebar-nav-item-active' : ''}`}
                                 onClick={() => handleNavigate(item?.path)}
                             >
                                 <div className="sidebar-nav-icon">{item?.icon}</div>
@@ -226,8 +226,7 @@ const AdminSidebar = (props) => {
                     )}
 
                     <div
-                        className={`sidebar-mobile ${isSidebarOpen ? 'sidebar-mobile-open' : ''
-                            }`}
+                        className={`sidebar-mobile ${isSidebarOpen ? 'sidebar-mobile-open' : ''}`}
                     >
                         <button
                             className="sidebar-mobile-close"

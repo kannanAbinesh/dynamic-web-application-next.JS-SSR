@@ -33,5 +33,5 @@ const queriesSchema = new mongoose.Schema({
 
 });
 
-const Queries = mongoose.model.queriesSchema || mongoose.model('Queries', queriesSchema, 'Queries');
+const Queries = mongoose.models.Queries || mongoose.model('Queries', queriesSchema, 'Queries');
 export default Queries;
