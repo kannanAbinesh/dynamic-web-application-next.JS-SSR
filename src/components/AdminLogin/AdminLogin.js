@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { User, Lock } from 'lucide-react';
 import { showToast } from 'nextjs-toast-notify';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 
 /* Styles. */
 import './adminLogin.css';
@@ -15,6 +15,7 @@ const AdminLogin = () => {
     /*Local state declarations. */
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [show, setShow] = useState(false);
 
     /* Hooks declarations. */
     const router = useRouter();
@@ -44,58 +45,52 @@ const AdminLogin = () => {
     };
 
     return (
-        <div className="login-page">
+        <div className='admin-login-container'>
 
-            <div className="login-left-section">
+            {/* Login form. */}
+            <div className='admin-login-form-container'>
+                <div className='admin-login-form-grid'>
 
-                <div className="login-form-container">
-                    <div className="login-header">
-                        <h1 className="login-title">Welcome</h1>
-                        <p className="login-subtitle">Enter your email and password to sign in</p>
+                    <div className="admin-login-form-header-container">
+                        <h4>Welcome</h4>
+                        <p className='admin-login-form-header-text'>Enter your email and password to sign in</p>
                     </div>
-                    <form onSubmit={handleSubmit} className="login-form">
-                        <div className="form-group">
-                            <div className="input-wrapper">
-                                <User className="input-icon" />
-                                <input
-                                    type="text"
-                                    className="form-input"
-                                    placeholder="Email or Username"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                />
-                            </div>
+
+                    <form onSubmit={handleSubmit} className="admin-login-form">
+
+                        <div className="admin-input-container">
+                            <User className="admin-login-input-icon" />
+                            <input
+                                type="text"
+                                className="admin-login-input"
+                                placeholder="Email or Username"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
                         </div>
 
-                        <div className="form-group">
-                            <div className="input-wrapper">
-                                <Lock className="input-icon" />
-                                <input
-                                    type="password"
-                                    className="form-input"
-                                    placeholder="Password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                />
-                            </div>
+                        <div className="admin-input-container">
+                            <Lock className="admin-login-input-icon" />
+                            <input
+                                type={show ? 'text' : 'password'}
+                                className="admin-login-input"
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                            {!show ? <FaEyeSlash className="admin-login-password-field-icon" onClick={() => setShow(!show)} /> : <FaEye className="admin-login-password-field-icon" onClick={() => setShow(!show)} />}
                         </div>
 
-                        <button type="submit" className="login-submit-btn">Sign In →</button>
+                        <button type="submit" className="admin-login-submit-btn">Sign In →</button>
                     </form>
                 </div>
             </div>
 
-            <div className="login-right-section">
-                <Image
-                    src="/images/superadminLoginBanner.svg"
-                    className='login-bg-image'
-                    alt="logo"
-                    width={50}
-                    height={50}
-                    priority
-                />
+            {/* Login banner. */}
+            <div className='admin-login-banner-container'>
+                <div className='admin-login-banner' />
             </div>
         </div>
     );
