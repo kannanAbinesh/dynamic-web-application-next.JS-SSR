@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 /* Model. */
 import SiteSetting from "@/models/SiteSettings";
 
-export default async function GET() {
+export async function GET() {
     try {
 
         /* Variable declarations. */

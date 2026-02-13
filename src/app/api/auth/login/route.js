@@ -40,7 +40,7 @@ export async function POST(req) {
 
         /* 5. Set the token in Browser Cookies */
         const cookieStore = await cookies();
-        cookieStore.set("id_token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 3 });
+        cookieStore.set("id_token", token, { httpOnly: true, secure: process.env.ENVIRONMENT === "production", sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 3 });
 
         /* Return if the process success. */
         return NextResponse.json({ message: 'Login successfull' }, { status: 200 })

@@ -5,17 +5,20 @@ import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { showToast } from "nextjs-toast-notify";
 import Image from 'next/image';
+import { useDispatch } from "react-redux";
 
 /* Components. */
 import CommonInputField from "../CommonInputField/CommonInputField";
 
 /* Style. */
 import './siteSettings.css';
+import { fetchSiteSettings } from "@/reducers";
 
 const SiteSettings = (props) => {
 
     /* Props. */
-    const { formData, onSubmit } = props;
+    const { formData } = props;
+    console.log(formData, 'formDataformDataformDataformDataformData')
 
     /* State management. */
     const [logoPreview, setLogoPreview] = useState(null);
@@ -24,6 +27,7 @@ const SiteSettings = (props) => {
     const [imageFiles, setImageFiles] = useState({ logo: null, darkThemeLogo: null, favicon: null });
 
     /* Hooks declarations. */
+    const dispatch = useDispatch();
     const { control, handleSubmit, reset, setValue, formState: { isSubmitting } } = useForm({
         defaultValues: {
             siteName: '', poweredBy: '', siteMail: '', logo: '', darkThemeLogo: '', favicon: '', facebook: '', twitter: '',
@@ -48,7 +52,10 @@ const SiteSettings = (props) => {
     const handleFormSubmit = async (data) => {
         try {
             const formDataToSend = new FormData();
-            Object.keys(data).forEach(key => { if (['logo', 'darkThemeLogo', 'favicon']?.includes(key)) formDataToSend.append(key, data[key] || '') });
+
+            Object.keys(data).forEach(key => {
+                if (!['logo', 'darkThemeLogo', 'favicon'].includes(key)) formDataToSend.append(key, data[key] || '');
+            });
 
             /* Logo. */
             if (imageFiles.logo) formDataToSend.append('logo', imageFiles.logo);
@@ -62,11 +69,26 @@ const SiteSettings = (props) => {
             if (imageFiles.favicon) formDataToSend.append('favicon', imageFiles.favicon);
             else if (data.favicon) formDataToSend.append('existingFavicon', data.favicon);
 
-            if (onSubmit) await onSubmit(formDataToSend);
-        } catch (error) {
-            showToast.error(error, { duration: 4000, progress: true, position: "bottom-right", transition: "bounceIn" });
-            return "";
-        };
+            const response = await fetch('/api/siteSettings/manageSiteSettings', {
+                method: 'POST',
+                body: formDataToSend, // Don't set Content-Type, browser will set it with boundary
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast.success('Settings updated successfully!', {
+                    duration: 4000,
+                    progress: true,
+                    position: "bottom-right",
+                    transition: "bounceIn"
+                });
+
+                // Refresh Redux store
+                dispatch(fetchSiteSettings());
+            }
+
+        } catch (error) { showToast.error(error.message || 'Something went wrong', { duration: 4000, progress: true, position: "bottom-right", transition: "bounceIn" }) }
     };
 
     /* Fucntionality to handle images. */
