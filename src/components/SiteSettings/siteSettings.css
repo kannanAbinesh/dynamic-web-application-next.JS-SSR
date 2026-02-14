@@ -35,142 +35,138 @@
     flex-direction: column;
 }
 
-.image-label {
+/* Common Image Upload Styles */
+.common-image-upload-label {
+    font-family: lexend !important;
     font-size: 14px;
     font-weight: 600;
     margin-bottom: 10px;
     color: #333;
+    text-align: left;
 }
 
-[data-theme="dark"] .image-label {
+[data-theme="dark"] .common-image-upload-label {
     color: #e0e0e0;
 }
 
-.image-upload-area {
-    border: 2px dashed #d1e7e8;
-    border-radius: 12px;
-    padding: 20px;
-    min-height: 220px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
+.common-image-upload-wrapper {
+    border: 1px dashed #077a7d;
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    border-radius: 5px;
+    position: relative;
     background: #fafafa;
+    transition: all 0.3s ease;
 }
 
-.image-upload-area:hover {
-    border-color: #077a7d;
+.common-image-upload-wrapper:hover {
     background: #f0f9f9;
 }
 
-[data-theme="dark"] .image-upload-area {
+[data-theme="dark"] .common-image-upload-wrapper {
     background: rgba(255, 255, 255, 0.02);
     border-color: rgba(255, 255, 255, 0.2);
 }
 
-[data-theme="dark"] .image-upload-area:hover {
-    border-color: #3b82f6;
+[data-theme="dark"] .common-image-upload-wrapper:hover {
     background: rgba(59, 130, 246, 0.05);
 }
 
-.upload-placeholder {
+.image-display-section {
+    height: 150px;
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    flex-direction: column;
     gap: 10px;
-    cursor: pointer;
+}
+
+.default-image-icon {
+    width: 80px;
+    height: 80px;
     color: #077a7d;
-    transition: all 0.3s ease;
+    opacity: 0.5;
 }
 
-.upload-placeholder:hover {
-    transform: scale(1.05);
-    color: #055a5d;
-}
-
-[data-theme="dark"] .upload-placeholder {
+[data-theme="dark"] .default-image-icon {
     color: #3b82f6;
 }
 
-[data-theme="dark"] .upload-placeholder:hover {
-    color: #60a5fa;
-}
-
-.upload-placeholder span {
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.image-preview-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
+.common-image-upload-style {
     width: 100%;
+    max-width: 210px;
+    height: 100%;
+    max-height: 145px;
+    object-fit: contain;
 }
 
-.image-preview-box img {
-    max-width: 100%;
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
-}
-
-[data-theme="dark"] .image-preview-box img {
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-.image-buttons {
-    display: flex;
-    gap: 10px;
-}
-
-.btn-danger,
-.btn-primary {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: none;
+.drag-drop-text {
     font-size: 14px;
-    font-weight: 500;
+    color: #666;
+}
+
+[data-theme="dark"] .drag-drop-text {
+    color: #999;
+}
+
+.common-image-upload-section {
+    margin-top: 25px;
+    border-radius: 5px;
+    color: #ffffff;
+    background-color: #077a7d;
+    width: 100%;
     cursor: pointer;
+    padding: 15px;
     transition: all 0.3s ease;
 }
 
-.btn-danger {
-    background: #dc3545;
-    color: white;
+.common-image-upload-section:hover {
+    background-color: #055a5d;
 }
 
-.btn-danger:hover {
-    background: #c82333;
+[data-theme="dark"] .common-image-upload-section {
+    background-color: #3b82f6;
 }
 
-.btn-primary {
-    background: #077a7d;
-    color: white;
+[data-theme="dark"] .common-image-upload-section:hover {
+    background-color: #2563eb;
 }
 
-.btn-primary:hover {
-    background: #055a5d;
-}
-
-[data-theme="dark"] .btn-primary {
-    background: #3b82f6;
-}
-
-[data-theme="dark"] .btn-primary:hover {
-    background: #2563eb;
-}
-
-.uploading-text {
-    margin-top: 10px;
-    color: #077a7d;
-    font-size: 14px;
+.common-image-upload-inner-content {
+    cursor: pointer;
     font-weight: 500;
+    font-size: 14px;
 }
 
-[data-theme="dark"] .uploading-text {
-    color: #3b82f6;
+.common-site-settings-delete-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    cursor: pointer;
+    border-radius: 50px;
+    height: 25px;
+    width: 25px;
+    background-color: #077a7d;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.common-site-settings-delete-wrapper:hover {
+    background-color: #055a5d;
+    transform: scale(1.1);
+}
+
+[data-theme="dark"] .common-site-settings-delete-wrapper {
+    box-shadow: 0 2px 10px 1px rgba(255, 255, 255, 0.3);
+    background-color: #171D37;
+}
+
+[data-theme="dark"] .common-site-settings-delete-wrapper:hover {
+    background-color: #0f1422;
 }
 
 /* Form Grid */
@@ -292,7 +288,6 @@
 
 /* Responsive Styles */
 @media screen and (max-width: 768px) {
-
     .image-grid {
         grid-template-columns: 1fr;
     }
@@ -319,9 +314,22 @@
         font-size: 16px;
     }
 
-    .image-upload-area {
-        min-height: 180px;
-        padding: 15px;
+    .common-image-upload-wrapper {
+        padding: 8px;
+    }
+
+    .image-display-section {
+        height: 120px;
+    }
+
+    .default-image-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .common-image-upload-section {
+        margin-top: 15px;
+        padding: 12px;
     }
 
     .form-input {

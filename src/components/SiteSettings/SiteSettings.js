@@ -4,8 +4,9 @@
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { showToast } from "nextjs-toast-notify";
-import Image from 'next/image';
 import { useDispatch } from "react-redux";
+import { CgTrash } from "react-icons/cg";
+import { HiOutlinePhotograph } from "react-icons/hi";
 
 /* Components. */
 import CommonInputField from "../CommonInputField/CommonInputField";
@@ -18,13 +19,13 @@ const SiteSettings = (props) => {
 
     /* Props. */
     const { formData } = props;
-    console.log(formData, 'formDataformDataformDataformDataformData')
 
     /* State management. */
     const [logoPreview, setLogoPreview] = useState(null);
     const [darkLogoPreview, setDarkLogoPreview] = useState(null);
     const [faviconPreview, setFaviconPreview] = useState(null);
     const [imageFiles, setImageFiles] = useState({ logo: null, darkThemeLogo: null, favicon: null });
+    const [imageLoaded, setImageLoaded] = useState({ logo: false, darkThemeLogo: false, favicon: false });
 
     /* Hooks declarations. */
     const dispatch = useDispatch();
@@ -35,17 +36,24 @@ const SiteSettings = (props) => {
         }
     });
 
-    /* To intiialize the form values. */
+    /* To initialize the form values. */
     useEffect(() => {
         if (formData) {
-            const customizedFormData = {};
-            Object.keys(formData).forEach(key => { customizedFormData[key] = formData[key]?.value || '' });
+
+            let customizedFormData = {};
+            let isNestedStructure = formData[Object.keys(formData)[0]]?.hasOwnProperty('value');
+
+            Object.keys(formData).forEach(key => { customizedFormData[key] = isNestedStructure ? (formData[key]?.value || '') : (formData[key] || '') });
             reset(customizedFormData);
 
-            if (formData.logo?.value) setLogoPreview(`/uploads/siteSettings/${formData.logo.value}`);
-            if (formData.darkThemeLogo?.value) setDarkLogoPreview(`/uploads/siteSettings/${formData.darkThemeLogo.value}`);
-            if (formData.favicon?.value) setFaviconPreview(`/uploads/siteSettings/${formData.favicon.value}`);
-        }
+            let logoValue = isNestedStructure ? formData.logo?.value : formData.logo;
+            let darkLogoValue = isNestedStructure ? formData.darkThemeLogo?.value : formData.darkThemeLogo;
+            let faviconValue = isNestedStructure ? formData.favicon?.value : formData.favicon;
+
+            if (logoValue) setLogoPreview(`/uploads/siteSettings/${logoValue}`);
+            if (darkLogoValue) setDarkLogoPreview(`/uploads/siteSettings/${darkLogoValue}`);
+            if (faviconValue) setFaviconPreview(`/uploads/siteSettings/${faviconValue}`);
+        };
     }, [formData, reset]);
 
     /* Submit functionality. */
@@ -71,40 +79,41 @@ const SiteSettings = (props) => {
 
             const response = await fetch('/api/siteSettings/manageSiteSettings', {
                 method: 'POST',
-                body: formDataToSend, // Don't set Content-Type, browser will set it with boundary
+                body: formDataToSend,
             });
 
-            const result = await response.json();
-
-            if (result.success) {
-                showToast.success('Settings updated successfully!', {
-                    duration: 4000,
-                    progress: true,
-                    position: "bottom-right",
-                    transition: "bounceIn"
-                });
-
-                // Refresh Redux store
+            if (response?.status) {
+                showToast.success('Settings updated successfully!', { duration: 4000, progress: true, position: "bottom-right", transition: "bounceIn" });
                 dispatch(fetchSiteSettings());
-            }
+            };
 
-        } catch (error) { showToast.error(error.message || 'Something went wrong', { duration: 4000, progress: true, position: "bottom-right", transition: "bounceIn" }) }
+        } catch (error) { showToast.error(error.message, { duration: 4000, progress: true, position: "bottom-right", transition: "bounceIn" }) };
     };
 
-    /* Fucntionality to handle images. */
+    /* Functionality to handle images. */
     const handleImageChange = (e, fieldName) => {
         const file = e.target.files[0];
         if (!file) return;
 
         if (!file.type.startsWith('image/')) {
-            showToast.error('Please select an image file', { duration: 4000, progress: true, position: "bottom-right", transition: "bounceIn" });
+            showToast.error('Please select an image file', {
+                duration: 4000,
+                progress: true,
+                position: "bottom-right",
+                transition: "bounceIn"
+            });
             return;
-        };
+        }
 
         if (file.size > 5 * 1024 * 1024) {
-            showToast.error('Image to be less than 5MB', { duration: 4000, progress: true, position: "bottom-right", transition: "bounceIn" });
-            return "";
-        };
+            showToast.error('Image must be less than 5MB', {
+                duration: 4000,
+                progress: true,
+                position: "bottom-right",
+                transition: "bounceIn"
+            });
+            return;
+        }
 
         setImageFiles(prev => ({ ...prev, [fieldName]: file }));
 
@@ -118,19 +127,30 @@ const SiteSettings = (props) => {
         setValue(fieldName, file.name);
     };
 
-    /* Delete the uploaed images */
+    /* Delete the uploaded images */
     const handleImageDelete = (fieldName) => {
         if (fieldName === 'logo') setLogoPreview(null);
         if (fieldName === 'darkThemeLogo') setDarkLogoPreview(null);
         if (fieldName === 'favicon') setFaviconPreview(null);
 
         setImageFiles(prev => ({ ...prev, [fieldName]: null }));
+        setImageLoaded(prev => ({ ...prev, [fieldName]: false }));
         setValue(fieldName, '');
+    };
+
+    /* Handle image load */
+    const handleImageLoad = (fieldName) => {
+        setImageLoaded(prev => ({ ...prev, [fieldName]: true }));
+    };
+
+    /* Handle image error */
+    const handleImageError = (fieldName) => {
+        setImageLoaded(prev => ({ ...prev, [fieldName]: false }));
     };
 
     return (
         <div className="site-settings-container">
-            <form onSubmit={handleSubmit(handleFormSubmit)}>
+            <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
 
                 {/* Image Upload Section */}
                 <div className="settings-section">
@@ -138,136 +158,130 @@ const SiteSettings = (props) => {
 
                         {/* Logo Upload */}
                         <div className="image-upload-box">
-                            <label className="image-label">Logo</label>
-                            <div className="image-upload-area">
-                                {logoPreview ? (
-                                    <div className="image-preview-box">
-                                        <Image
-                                            src={logoPreview}
-                                            alt="Logo"
-                                            width={150}
-                                            height={150}
-                                            style={{ objectFit: 'contain' }}
-                                        />
-                                        <div className="image-buttons">
-                                            <button type="button" className="btn-danger" onClick={() => handleImageDelete('logo')}>Delete</button>
-                                            <label className="btn-primary">
-                                                Change
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    style={{ display: 'none' }}
-                                                    onChange={(e) => handleImageChange(e, 'logo')}
-                                                />
-                                            </label>
-                                        </div>
+                            <label className="common-image-upload-label">Logo</label>
+                            <div className="common-image-upload-wrapper">
+                                {logoPreview && (
+                                    <div className="common-site-settings-delete-wrapper" onClick={() => handleImageDelete('logo')}>
+                                        <CgTrash color="#ffffff" />
                                     </div>
-                                ) : (
-                                    <label className="upload-placeholder">
-                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                                        </svg>
-                                        <span>Upload Logo</span>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            style={{ display: 'none' }}
-                                            onChange={(e) => handleImageChange(e, 'logo')}
-                                        />
-                                    </label>
                                 )}
+
+                                <div className="image-display-section">
+                                    {logoPreview ? (
+                                        <img
+                                            src={logoPreview}
+                                            className="common-image-upload-style"
+                                            onLoad={() => handleImageLoad('logo')}
+                                            onError={() => handleImageError('logo')}
+                                            style={{ opacity: imageLoaded.logo ? 1 : 0, transition: 'opacity 0.2s ease-in-out' }}
+                                            alt="Logo"
+                                        />
+                                    ) : (
+                                        <>
+                                            <HiOutlinePhotograph className="default-image-icon" />
+                                            <span className="drag-drop-text">Drag and drop the image</span>
+                                        </>
+                                    )}
+                                </div>
+
+                                <div className="common-image-upload-section">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                        id="logo-upload"
+                                        onChange={(e) => handleImageChange(e, 'logo')}
+                                    />
+                                    <label htmlFor="logo-upload" className="common-image-upload-inner-content">
+                                        Click here to upload
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
                         {/* Dark Theme Logo Upload */}
                         <div className="image-upload-box">
-                            <label className="image-label">Dark Theme Logo</label>
-                            <div className="image-upload-area">
-                                {darkLogoPreview ? (
-                                    <div className="image-preview-box">
-                                        <Image
-                                            src={darkLogoPreview}
-                                            alt="Dark Logo"
-                                            width={150}
-                                            height={150}
-                                            style={{ objectFit: 'contain' }}
-                                        />
-                                        <div className="image-buttons">
-                                            <button type="button" className="btn-danger" onClick={() => handleImageDelete('darkThemeLogo')}>Delete</button>
-                                            <label className="btn-primary">
-                                                Change
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    style={{ display: 'none' }}
-                                                    onChange={(e) => handleImageChange(e, 'darkThemeLogo')}
-                                                />
-                                            </label>
-                                        </div>
+                            <label className="common-image-upload-label">Dark Theme Logo</label>
+                            <div className="common-image-upload-wrapper">
+                                {darkLogoPreview && (
+                                    <div className="common-site-settings-delete-wrapper" onClick={() => handleImageDelete('darkThemeLogo')}>
+                                        <CgTrash color="#ffffff" />
                                     </div>
-                                ) : (
-                                    <label className="upload-placeholder">
-                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                                        </svg>
-                                        <span>Upload Dark Logo</span>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            style={{ display: 'none' }}
-                                            onChange={(e) => handleImageChange(e, 'darkThemeLogo')}
-                                        />
-                                    </label>
                                 )}
+
+                                <div className="image-display-section">
+                                    {darkLogoPreview ? (
+                                        <img
+                                            src={darkLogoPreview}
+                                            className="common-image-upload-style"
+                                            onLoad={() => handleImageLoad('darkThemeLogo')}
+                                            onError={() => handleImageError('darkThemeLogo')}
+                                            style={{ opacity: imageLoaded.darkThemeLogo ? 1 : 0, transition: 'opacity 0.2s ease-in-out' }}
+                                            alt="Dark Logo"
+                                        />
+                                    ) : (
+                                        <>
+                                            <HiOutlinePhotograph className="default-image-icon" />
+                                            <span className="drag-drop-text">Drag and drop the image</span>
+                                        </>
+                                    )}
+                                </div>
+
+                                <div className="common-image-upload-section">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                        id="darkLogo-upload"
+                                        onChange={(e) => handleImageChange(e, 'darkThemeLogo')}
+                                    />
+                                    <label htmlFor="darkLogo-upload" className="common-image-upload-inner-content">
+                                        Click here to upload
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
                         {/* Favicon Upload */}
                         <div className="image-upload-box">
-                            <label className="image-label">Favicon</label>
-                            <div className="image-upload-area">
-                                {faviconPreview ? (
-                                    <div className="image-preview-box">
-                                        <Image
-                                            src={faviconPreview}
-                                            alt="Favicon"
-                                            width={150}
-                                            height={150}
-                                            style={{ objectFit: 'contain' }}
-                                        />
-                                        <div className="image-buttons">
-                                            <button
-                                                type="button"
-                                                className="btn-danger"
-                                                onClick={() => handleImageDelete('favicon')}
-                                            >
-                                                Delete
-                                            </button>
-                                            <label className="btn-primary">
-                                                Change
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    style={{ display: 'none' }}
-                                                    onChange={(e) => handleImageChange(e, 'favicon')}
-                                                />
-                                            </label>
-                                        </div>
+                            <label className="common-image-upload-label">Favicon</label>
+                            <div className="common-image-upload-wrapper">
+                                {faviconPreview && (
+                                    <div className="common-site-settings-delete-wrapper" onClick={() => handleImageDelete('favicon')}>
+                                        <CgTrash color="#ffffff" />
                                     </div>
-                                ) : (
-                                    <label className="upload-placeholder">
-                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                                        </svg>
-                                        <span>Upload Favicon</span>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            style={{ display: 'none' }}
-                                            onChange={(e) => handleImageChange(e, 'favicon')}
-                                        />
-                                    </label>
                                 )}
+
+                                <div className="image-display-section">
+                                    {faviconPreview ? (
+                                        <img
+                                            src={faviconPreview}
+                                            className="common-image-upload-style"
+                                            onLoad={() => handleImageLoad('favicon')}
+                                            onError={() => handleImageError('favicon')}
+                                            style={{ opacity: imageLoaded.favicon ? 1 : 0, transition: 'opacity 0.2s ease-in-out' }}
+                                            alt="Favicon"
+                                        />
+                                    ) : (
+                                        <>
+                                            <HiOutlinePhotograph className="default-image-icon" />
+                                            <span className="drag-drop-text">Drag and drop the image</span>
+                                        </>
+                                    )}
+                                </div>
+
+                                <div className="common-image-upload-section">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                        id="favicon-upload"
+                                        onChange={(e) => handleImageChange(e, 'favicon')}
+                                    />
+                                    <label htmlFor="favicon-upload" className="common-image-upload-inner-content">
+                                        Click here to upload
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -290,7 +304,7 @@ const SiteSettings = (props) => {
                                 name="poweredBy"
                                 control={control}
                                 rules={{ required: 'PoweredBy is required' }}
-                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" label="Powered By" />)}
+                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter powered by" label="Powered By" />)}
                             />
                         </div>
                     </div>
@@ -304,7 +318,7 @@ const SiteSettings = (props) => {
                                 name="mail"
                                 control={control}
                                 rules={{ required: 'Mail is required' }}
-                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" label="Mail" />)}
+                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter mail" label="Mail" />)}
                             />
                         </div>
 
@@ -313,7 +327,7 @@ const SiteSettings = (props) => {
                                 name="facebook"
                                 rules={{ required: 'Facebook is required' }}
                                 control={control}
-                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" label="Facebook" />)}
+                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter facebook URL" label="Facebook" />)}
                             />
                         </div>
 
@@ -322,7 +336,7 @@ const SiteSettings = (props) => {
                                 name="instagram"
                                 control={control}
                                 rules={{ required: 'Instagram is required' }}
-                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" label="Instagram" />)}
+                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter instagram URL" label="Instagram" />)}
                             />
                         </div>
 
@@ -331,7 +345,7 @@ const SiteSettings = (props) => {
                                 name="youtube"
                                 control={control}
                                 rules={{ required: 'Youtube is required' }}
-                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" label="YouTube" />)}
+                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter youtube URL" label="YouTube" />)}
                             />
                         </div>
 
@@ -340,7 +354,7 @@ const SiteSettings = (props) => {
                                 name="whatsapp"
                                 control={control}
                                 rules={{ required: 'Whatsapp is required' }}
-                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter site name" label="WhatsApp" />)}
+                                render={(props) => (<CommonInputField {...props} type="text" placeholder="Enter whatsapp" label="WhatsApp" />)}
                             />
                         </div>
                     </div>
@@ -348,7 +362,9 @@ const SiteSettings = (props) => {
 
                 {/* Submit Button */}
                 <div className="submit-section">
-                    <button type="submit" className="submit-btn" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : 'Save Settings'}</button>
+                    <button type="submit" className="submit-btn" disabled={isSubmitting}>
+                        {isSubmitting ? 'Saving...' : 'Save Settings'}
+                    </button>
                 </div>
             </form>
         </div>

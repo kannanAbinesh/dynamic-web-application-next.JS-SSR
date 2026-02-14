@@ -34,7 +34,7 @@ export async function POST(req) {
                 const existingSetting = await SiteSetting.findOne({ key: fieldName });
                 if (existingSetting && existingSetting.value) {
                     const oldFilePath = path.join(uploadDir, existingSetting.value);
-                    if (fs.existsSync(oldFilePath)) await unlink(oldFilePath).catch(err => console.log('Old file delete error:', err));
+                    if (fs.existsSync(oldFilePath)) await unlink(oldFilePath).catch(err => { });
                 }
                 await writeFile(filePath, buffer);
                 settingsToUpdate[fieldName] = fileName;

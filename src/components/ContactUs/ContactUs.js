@@ -23,7 +23,6 @@ const ContactUs = () => {
 
     const handleFormSubmit = async (data) => {
         try {
-            console.log('Form data:', data);
 
             // Your API call here
             const response = await fetch('/api/users/addQueries', {

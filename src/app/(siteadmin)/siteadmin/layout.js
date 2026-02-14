@@ -32,7 +32,6 @@ export default function layout(props) {
     };
 
     const handleLogout = () => {
-        console.log('Logging out...');
     };
 
     const handleToggleSidebar = () => {
