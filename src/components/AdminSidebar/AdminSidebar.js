@@ -4,10 +4,11 @@
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { MdLightMode, MdDarkMode, MdLogout, MdMenu, MdClose } from 'react-icons/md';
+import { connect } from 'react-redux';
 
 /* Helpers. */
 import { adminSideBarData } from '@/helpers/adminSidebar';
-import logoImage from '../../askLogo.jpg';
 
 /* Styles. */
 import './adminSidebar.css';
@@ -15,15 +16,7 @@ import './adminSidebar.css';
 const AdminSidebar = (props) => {
 
     /* Props. */
-    const {
-        userDetails = { name: 'Admin User', _id: '1' },
-        siteSettings = {},
-        theme = 'light',
-        onToggleTheme,
-        onLogout,
-        isSidebarOpen = false,
-        onToggleSidebar
-    } = props;
+    const { userDetails, siteSettingsData, theme = 'light', onToggleTheme, onLogout, isSidebarOpen = false, onToggleSidebar } = props;
 
     /* State. */
     const [isDesktop, setIsDesktop] = useState(true);
@@ -33,6 +26,7 @@ const AdminSidebar = (props) => {
     const pathname = usePathname();
     const router = useRouter();
 
+    /* To get the screen resolution to find the device in which the application is running. */
     useEffect(() => {
         const handleResize = () => {
             const desktop = window.innerWidth > 768;
@@ -44,146 +38,124 @@ const AdminSidebar = (props) => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    /* Check if path is focused */
     const isFocusedPath = (path) => pathname === path;
 
-    const siteLogo = siteSettings?.data?.[theme === 'dark' ? 'darkThemeLogo' : 'logo']?.value
-        ? `/uploads/siteSettings/${siteSettings?.data[theme === 'dark' ? 'darkThemeLogo' : 'logo']?.value}`
-        : null;
+    /* Get site settings data */
+    const settingsData = siteSettingsData?.data || {};
 
-    const siteName = siteSettings?.data?.siteName?.value || 'Admin Portal';
+    // Determine which logo to show based on theme
+    const currentLogo = theme === 'dark' ? settingsData.darkThemeLogo : settingsData.logo;
+    const siteLogo = currentLogo ? `/uploads/siteSettings/${currentLogo}` : null;
+    const siteName = settingsData.siteName || 'Admin Portal';
+    const poweredBy = settingsData.poweredBy || 'Admin Portal';
 
+    /* Handle navigation */
     const handleNavigate = (path) => {
         router.push(path);
         if (!isDesktop && onToggleSidebar) onToggleSidebar();
     };
 
+    /* Handle logout */
     const handleLogout = () => {
         if (onLogout) onLogout();
     };
 
+    /* Handle theme toggle */
     const handleThemeToggle = () => {
         if (onToggleTheme) onToggleTheme();
     };
 
+    /* Render sidebar content */
     const renderSidebarContent = () => {
         return (
-            <div className="sidebar-container">
-                <div className="sidebar-header">
-                    <div
-                        className="sidebar-header-link"
-                        onClick={() => handleNavigate('/siteadmin/sitesettings')}
-                    >
-                        <div className="sidebar-logo-wrapper">
-                            <Image
-                                src={siteLogo || logoImage}
-                                alt="Site Logo"
-                                className="sidebar-logo"
-                                width={160}
-                                height={70}
-                                onLoad={() => setLogoLoaded(true)}
-                                onError={() => setLogoLoaded(false)}
-                                style={{
-                                    opacity: logoLoaded ? 1 : 0,
-                                    transition: 'opacity 0.5s ease-in-out'
-                                }}
-                                priority
-                            />
+            <div className="admin-sidebar-container">
+                <div className="admin-sidebar-header">
+                    <div className="admin-sidebar-header-link">
+                        <div className="admin-sidebar-logo-wrapper">
+                            {siteLogo ? (
+                                <Image
+                                    src={siteLogo}
+                                    alt="Site Logo"
+                                    className="admin-sidebar-logo"
+                                    onClick={() => handleNavigate('/siteadmin/sitesettings')}
+                                    width={160}
+                                    height={70}
+                                    onLoad={() => setLogoLoaded(true)}
+                                    onError={() => setLogoLoaded(false)}
+                                    style={{
+                                        opacity: logoLoaded ? 1 : 0,
+                                        transition: 'opacity 0.5s ease-in-out',
+                                        display: logoLoaded ? 'block' : 'none'
+                                    }}
+                                    priority
+                                />
+                            ) : null}
+
+                            {(!siteLogo || !logoLoaded) && (
+                                <h2
+                                    className="admin-sidebar-site-name"
+                                    onClick={() => handleNavigate('/siteadmin/sitesettings')}
+                                >
+                                    {siteName}
+                                </h2>
+                            )}
                         </div>
                     </div>
 
-                    <div className="sidebar-welcome-wrapper">
-                        <span className="sidebar-welcome-text">Welcome admin</span>
+                    <div className="admin-sidebar-welcome-wrapper">
+                        <span className="admin-sidebar-welcome-text">Welcome admin</span>
                     </div>
                 </div>
 
-                <div className="sidebar-body">
-                    <nav className="sidebar-nav">
+                <div className="admin-sidebar-body">
+                    <nav className="admin-sidebar-nav">
                         {adminSideBarData?.map((item, index) => (
                             <div
                                 key={index}
-                                className={`sidebar-nav-item ${isFocusedPath(item?.path) ? 'sidebar-nav-item-active' : ''}`}
+                                className={`admin-sidebar-nav-item ${isFocusedPath(item?.path) ? 'admin-sidebar-nav-item-active' : ''}`}
                                 onClick={() => handleNavigate(item?.path)}
                             >
-                                <div className="sidebar-nav-icon">{item?.icon}</div>
-                                <span className="sidebar-nav-text">{item?.name}</span>
+                                <div className="admin-sidebar-nav-icon">{item?.icon}</div>
+                                <span className="admin-sidebar-nav-text">{item?.name}</span>
                             </div>
                         ))}
                     </nav>
 
-                    <div className="sidebar-actions">
+                    <div className="admin-sidebar-actions">
                         <div
-                            className="sidebar-nav-item"
+                            className="admin-sidebar-nav-item"
                             onClick={handleThemeToggle}
                         >
-                            <div className="sidebar-nav-icon">
-                                {theme === 'light' ? (
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth={1.5}
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"
-                                        />
-                                    </svg>
-                                ) : (
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth={1.5}
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-                                        />
-                                    </svg>
-                                )}
+                            <div className="admin-sidebar-nav-icon">
+                                {theme === 'light' ? <MdDarkMode /> : <MdLightMode />}
                             </div>
-                            <span className="sidebar-nav-text">
+                            <span className="admin-sidebar-nav-text">
                                 {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
                             </span>
                         </div>
 
                         {userDetails?._id && (
                             <div
-                                className="sidebar-nav-item"
+                                className="admin-sidebar-nav-item"
                                 onClick={handleLogout}
                             >
-                                <div className="sidebar-nav-icon">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth={1.5}
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
-                                        />
-                                    </svg>
+                                <div className="admin-sidebar-nav-icon">
+                                    <MdLogout />
                                 </div>
-                                <span className="sidebar-nav-text">Logout</span>
+                                <span className="admin-sidebar-nav-text">Logout</span>
                             </div>
                         )}
                     </div>
                 </div>
 
                 {isDesktop && (
-                    <div className="sidebar-footer">
-                        <p className="sidebar-footer-text">
+                    <div className="admin-sidebar-footer">
+                        <p className="admin-sidebar-footer-text">
                             <strong>© {new Date().getFullYear()}</strong>{' '}
-                            {siteSettings?.data?.poweredBy?.value || 'Admin Portal'}
+                            {poweredBy}
                         </p>
-                        <p className="sidebar-footer-subtext">All rights reserved</p>
+                        <p className="admin-sidebar-footer-subtext">All rights reserved</p>
                     </div>
                 )}
             </div>
@@ -197,57 +169,29 @@ const AdminSidebar = (props) => {
             ) : (
                 <>
                     <button
-                        className="sidebar-mobile-toggle"
+                        className="admin-sidebar-mobile-toggle"
                         onClick={onToggleSidebar}
                         aria-label="Toggle Sidebar"
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            stroke="currentColor"
-                            width={24}
-                            height={24}
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                            />
-                        </svg>
+                        <MdMenu size={24} />
                     </button>
 
                     {isSidebarOpen && (
                         <div
-                            className="sidebar-overlay"
+                            className="admin-sidebar-overlay"
                             onClick={onToggleSidebar}
                         ></div>
                     )}
 
                     <div
-                        className={`sidebar-mobile ${isSidebarOpen ? 'sidebar-mobile-open' : ''}`}
+                        className={`admin-sidebar-mobile ${isSidebarOpen ? 'admin-sidebar-mobile-open' : ''}`}
                     >
                         <button
-                            className="sidebar-mobile-close"
+                            className="admin-sidebar-mobile-close"
                             onClick={onToggleSidebar}
                             aria-label="Close Sidebar"
                         >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={2}
-                                stroke="currentColor"
-                                width={24}
-                                height={24}
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M6 18L18 6M6 6l12 12"
-                                />
-                            </svg>
+                            <MdClose size={24} />
                         </button>
                         {renderSidebarContent()}
                     </div>
@@ -257,4 +201,9 @@ const AdminSidebar = (props) => {
     );
 };
 
-export default AdminSidebar;
+const mapState = state => ({
+    siteSettingsData: state?.siteSettings,
+    userDetails: state?.userDetails?.data
+});
+
+export default connect(mapState)(AdminSidebar);

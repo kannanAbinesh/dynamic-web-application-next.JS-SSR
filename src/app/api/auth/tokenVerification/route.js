@@ -32,8 +32,8 @@ export async function GET() {
         const user = await User.findById(decoded._id).select("-password");
         if (!user || user.status === 'inActive') return NextResponse.json({ message: "User no longer active" }, { status: 401 });
 
-        /* 5. Return user data */
-        return NextResponse.json({ authenticated: true, user: user }, { status: 200 });
+        /* Return user data */
+        return NextResponse.json({ data: { _id: user?._id, name: user?.name, email: user?.email, phoneNumber: user?.phoneNumber, role: user?.role } }, { status: 200 });
 
     } catch (error) { return NextResponse.json({ message: `Internal Error: ${error.message}` }, { status: 400 }) }
 }

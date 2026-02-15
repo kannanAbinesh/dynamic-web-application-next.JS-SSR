@@ -42,7 +42,7 @@ const siteSettingsSlice = createSlice({
 /* Store creation using reducers. */
 export default configureStore({
     reducer: {
-        userDetails,
-        siteSettings: siteSettingsSlice.reducer
+        siteSettings: siteSettingsSlice.reducer,
+        userDetails
     }
 });

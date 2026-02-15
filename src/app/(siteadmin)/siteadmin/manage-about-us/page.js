@@ -1,7 +1,6 @@
+/* Plugins. */
+import ManageAboutUs from "@/components/ManageAboutUs/ManageAboutUs";
+
 export default function ManageAboutUsIndex() {
-  return (
-    <div>
-        <p>hi</p>
-    </div>
-  );
-}
+  return (<ManageAboutUs />);
+};

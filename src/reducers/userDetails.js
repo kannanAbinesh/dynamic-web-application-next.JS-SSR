@@ -10,7 +10,7 @@ export const userDetails = (state = { loader: false }, action) => {
         case GET_USER_DETAILS_START:
             return { ...state, loader: true };
         case GET_USER_DETAILS_SUCCESS:
-            return { ...state, ...action?.payload, loader: false };
+            return { ...state, data: action?.payload, loader: false };
         case GET_USER_DETAILS_ERROR:
             return { ...state, loader: false }
         default:

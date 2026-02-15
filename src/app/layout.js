@@ -3,6 +3,7 @@ import { Lexend } from "next/font/google";
 
 /* Helpers. */
 import { Providers } from "./providers";
+import { ThemeProvider } from "@/configurations/theme";
 
 /* Styles. */
 import "./globals.css";
@@ -16,7 +17,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={lexend.className}>
         <Providers>
-          {children}
+          <ThemeProvider>
+            {children}
+          </ThemeProvider>
         </Providers>
       </body>
     </html>

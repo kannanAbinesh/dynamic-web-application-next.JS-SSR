@@ -41,6 +41,7 @@ export default function Navbar() {
         { name: "Home", route: "/" },
         { name: "About us", route: "/about-us" },
         { name: "Blogs", route: "/blogs" },
+        { name: "Gallery", route: "/gallery" },
         { name: "Contact us", route: "/contact-us" }
     ];
 

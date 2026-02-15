@@ -11,9 +11,11 @@ import { HiOutlinePhotograph } from "react-icons/hi";
 /* Components. */
 import CommonInputField from "../CommonInputField/CommonInputField";
 
+/* Helpers. */
+import { fetchSiteSettings } from "@/reducers";
+
 /* Style. */
 import './siteSettings.css';
-import { fetchSiteSettings } from "@/reducers";
 
 const SiteSettings = (props) => {
 
@@ -363,7 +365,7 @@ const SiteSettings = (props) => {
                 {/* Submit Button */}
                 <div className="submit-section">
                     <button type="submit" className="submit-btn" disabled={isSubmitting}>
-                        {isSubmitting ? 'Saving...' : 'Save Settings'}
+                        {isSubmitting ? 'Saving...' : 'Save'}
                     </button>
                 </div>
             </form>

@@ -1,40 +1,38 @@
 "use client";
 
-/* Plugins. */
+/* Plugins */
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { showToast } from "nextjs-toast-notify";
+import { useDispatch, useSelector } from "react-redux";
 
-/* Components. */
+/* Components */
 import Loader from "../Loader/Loader";
+
+/* Action */
+import { userDetails } from "@/actions/userDetails";
 
 export default function AdminAuthGate(props) {
 
-    /* Props. */
     const { children } = props;
 
-    /* State. */
+    /* Hooks. */
+    const router = useRouter();
+    const dispatch = useDispatch();
+
+    /* State declarations. */
     const [checking, setChecking] = useState(true);
 
-    /* Hooks declarations. */
-    const router = useRouter();
+    /* Loggedin user details. */
+    const { loading, data, error } = useSelector((state) => state.userDetails);
+
+    /* Verify the login users token is valid or not. */
+    useEffect(() => { dispatch(userDetails()) }, [dispatch]);
 
     useEffect(() => {
-        async function verify() {
-            try {
-                const response = await fetch("/api/auth/tokenVerification", { method: "GET" });
-                if (!response.ok) {
-                    router.replace("/siteadmin/login");
-                    return;
-                };
-            } catch (error) {
-                showToast.error(error, { duration: 4000, progress: true, position: "bottom-center", transition: "bounceIn" });
-                return "";
-            } finally { setChecking(false) };
-        };
-        verify();
-    }, [router]);
+        if (data) setChecking(false);
+        if (error) router.replace("/siteadmin/login");
+    }, [data, error, router]);
 
-    if (checking) return (<Loader />); /* Loader. */
-    return children; /* Childern routes. */
-};
+    if (checking || loading) return <Loader />;
+    return children;
+}
