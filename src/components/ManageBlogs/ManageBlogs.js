@@ -11,54 +11,58 @@ import { MdAdd } from "react-icons/md";
 /* Style. */
 import './manageBlogs.css';
 
-const ManageBlogs = () => {
+const ManageBlogs = ({ initialBlogs = [] }) => {
 
     /* State management. */
     const [blogImages, setBlogImages] = useState({});
-    const [existingBlogs, setExistingBlogs] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     /* Hooks declarations. */
-    const { control, handleSubmit, reset, formState: { isSubmitting } } = useForm({
+    const { control, handleSubmit, reset, setValue, formState: { isSubmitting } } = useForm({
         defaultValues: {
-            blogs: [
-                {
-                    header: '',
-                    description: '',
-                    date: '',
-                    time: '',
-                    images: []
-                }
-            ]
+            blogs: initialBlogs.length > 0 ? initialBlogs.map(blog => ({
+                _id: blog._id || '',
+                header: blog.header || '',
+                description: blog.description || '',
+                date: blog.date ? new Date(blog.date).toISOString().split('T')[0] : '',
+                time: blog.time || '',
+                existingImages: blog.images || []
+            })) : [{
+                header: '',
+                description: '',
+                date: '',
+                time: '',
+                existingImages: []
+            }]
         }
     });
 
-    const { fields, append, remove } = useFieldArray({
+    const { fields, append, remove, replace } = useFieldArray({
         control,
         name: "blogs"
     });
 
-    /* Fetch existing blogs on component mount. */
+    /* Update form when initialBlogs changes */
     useEffect(() => {
-        fetchBlogs();
-    }, []);
-
-    /* Fetch blogs from API. */
-    const fetchBlogs = async () => {
-        try {
-            setIsLoading(true);
-            const response = await fetch('/api/blogs/manageBlogs');
-            const result = await response.json();
-
-            if (result.success) {
-                setExistingBlogs(result.blogs || []);
-            }
-        } catch (error) {
-            console.error('Error fetching blogs:', error);
-        } finally {
-            setIsLoading(false);
+        console.log('initialBlogs:', initialBlogs);
+        
+        if (initialBlogs && initialBlogs.length > 0) {
+            const formattedBlogs = initialBlogs.map(blog => {
+                console.log('Blog images:', blog.images);
+                return {
+                    _id: blog._id || '',
+                    header: blog.header || '',
+                    description: blog.description || '',
+                    date: blog.date ? new Date(blog.date).toISOString().split('T')[0] : '',
+                    time: blog.time || '',
+                    existingImages: blog.images || []
+                };
+            });
+            
+            console.log('Formatted blogs:', formattedBlogs);
+            replace(formattedBlogs);
         }
-    };
+    }, [initialBlogs, replace]);
 
     /* Handle multiple image upload for specific blog. */
     const handleImageUpload = (e, index) => {
@@ -113,12 +117,19 @@ const ManageBlogs = () => {
         e.target.value = '';
     };
 
-    /* Delete image from blog. */
-    const handleDeleteImage = (blogIndex, imageId) => {
+    /* Delete new image from blog. */
+    const handleDeleteNewImage = (blogIndex, imageId) => {
         setBlogImages(prev => ({
             ...prev,
             [blogIndex]: prev[blogIndex].filter(img => img.id !== imageId)
         }));
+    };
+
+    /* Delete existing image from blog. */
+    const handleDeleteExistingImage = (blogIndex, imageIndex, fieldValue) => {
+        const updatedImages = [...fieldValue];
+        updatedImages.splice(imageIndex, 1);
+        return updatedImages;
     };
 
     /* Submit blogs to API. */
@@ -126,23 +137,34 @@ const ManageBlogs = () => {
         try {
             const formDataToSend = new FormData();
 
-            // Append each blog with its images
             data.blogs.forEach((blog, index) => {
+                // If blog has _id, it's an update, otherwise it's new
+                if (blog._id) {
+                    formDataToSend.append(`blogs[${index}][_id]`, blog._id);
+                }
+                
                 formDataToSend.append(`blogs[${index}][header]`, blog.header || '');
                 formDataToSend.append(`blogs[${index}][description]`, blog.description || '');
                 formDataToSend.append(`blogs[${index}][date]`, blog.date || '');
                 formDataToSend.append(`blogs[${index}][time]`, blog.time || '');
 
-                // Append images for this blog
+                // Append new images
                 const images = blogImages[index] || [];
                 images.forEach((image) => {
                     if (image.isNew) {
                         formDataToSend.append(`blogs[${index}][images]`, image.file);
                     }
                 });
+
+                // Append existing images that weren't deleted
+                if (blog.existingImages && blog.existingImages.length > 0) {
+                    blog.existingImages.forEach((img, imgIndex) => {
+                        formDataToSend.append(`blogs[${index}][existingImages][${imgIndex}]`, img.image);
+                    });
+                }
             });
 
-            const response = await fetch('/api/blogs/manageBlogs', {
+            const response = await fetch('/api/siteSettings/manage-blogs', {
                 method: 'POST',
                 body: formDataToSend,
             });
@@ -150,31 +172,17 @@ const ManageBlogs = () => {
             const result = await response.json();
 
             if (result.success) {
-                showToast.success('Blogs created successfully!', {
+                showToast.success('Blogs saved successfully!', {
                     duration: 4000,
                     progress: true,
                     position: "bottom-right",
                     transition: "bounceIn"
                 });
 
-                // Reset form
-                reset({
-                    blogs: [
-                        {
-                            header: '',
-                            description: '',
-                            date: '',
-                            time: '',
-                            images: []
-                        }
-                    ]
-                });
                 setBlogImages({});
-
-                // Refresh blogs
-                fetchBlogs();
+                
             } else {
-                throw new Error(result.message || 'Failed to create blogs');
+                throw new Error(result.message || 'Failed to save blogs');
             }
 
         } catch (error) {
@@ -188,19 +196,26 @@ const ManageBlogs = () => {
         }
     };
 
-    /* Delete existing blog. */
-    const handleDeleteBlog = async (blogId) => {
-        if (!confirm('Are you sure you want to delete this blog?')) return;
+    /* Delete blog. */
+    const handleDeleteBlog = async (blogId, index) => {
+        if (!blogId) {
+            // Just remove from form if it's a new blog
+            remove(index);
+            const newImages = { ...blogImages };
+            delete newImages[index];
+            setBlogImages(newImages);
+            return;
+        }
 
         try {
-            const response = await fetch(`/api/blogs/manageBlogs?id=${blogId}`, {
+            const response = await fetch(`/api/siteSettings/manage-blogs?id=${blogId}`, {
                 method: 'DELETE'
             });
 
             const result = await response.json();
 
             if (result.success) {
-                setExistingBlogs(prev => prev.filter(blog => blog._id !== blogId));
+                remove(index);
                 showToast.success('Blog deleted successfully', {
                     duration: 3000,
                     progress: true,
@@ -224,226 +239,239 @@ const ManageBlogs = () => {
     return (
         <div className="manage-blogs-container">
             <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
-                <div className="blogs-grid">
-                    {fields.map((field, index) => (
-                        <div key={field.id} className="blog-card">
-                            <div className="blog-card-header">
-                                <h3 className="blog-number">Blog #{index + 1}</h3>
-                                {fields.length > 1 && (
-                                    <button
-                                        type="button"
-                                        className="remove-blog-btn"
-                                        onClick={() => {
-                                            remove(index);
-                                            setBlogImages(prev => {
-                                                const newImages = { ...prev };
-                                                delete newImages[index];
-                                                return newImages;
-                                            });
-                                        }}
-                                    >
-                                        <CgTrash />
-                                    </button>
-                                )}
-                            </div>
+                {fields.length === 0 ? (
+                    <div className="manage-blogs-no-blogs-section">
+                        No blogs yet. Click "Add Blog" to create one.
+                    </div>
+                ) : (
+                    <div className="manage-blogs-grid">
+                        {fields.map((field, index) => {
+                            console.log('Field data:', field);
+                            console.log('Existing images for field:', field.existingImages);
+                            
+                            return (
+                                <div key={field.id} className="manage-blogs-card">
+                                    <div className="manage-blogs-card-header">
+                                        <h3 className="manage-blogs-number">
+                                            Blog #{index + 1} {field._id && <span style={{ fontSize: '12px', color: '#666' }}>(Existing)</span>}
+                                        </h3>
+                                        <button
+                                            type="button"
+                                            className="manage-blogs-remove-btn"
+                                            onClick={() => handleDeleteBlog(field._id, index)}
+                                        >
+                                            <CgTrash />
+                                        </button>
+                                    </div>
 
-                            <div className="blog-form-content">
-                                {/* Header */}
-                                <div className="form-group">
-                                    <label className="form-label">Blog Header *</label>
-                                    <Controller
-                                        name={`blogs.${index}.header`}
-                                        control={control}
-                                        rules={{ required: 'Blog header is required' }}
-                                        render={({ field, fieldState: { error } }) => (
-                                            <>
-                                                <input
-                                                    {...field}
-                                                    type="text"
-                                                    placeholder="Enter blog header"
-                                                    className={`form-input ${error ? 'error' : ''}`}
-                                                />
-                                                {error && <span className="error-message">{error.message}</span>}
-                                            </>
-                                        )}
-                                    />
-                                </div>
-
-                                {/* Description */}
-                                <div className="form-group">
-                                    <label className="form-label">Blog Description *</label>
-                                    <Controller
-                                        name={`blogs.${index}.description`}
-                                        control={control}
-                                        rules={{ required: 'Blog description is required' }}
-                                        render={({ field, fieldState: { error } }) => (
-                                            <>
-                                                <textarea
-                                                    {...field}
-                                                    rows={4}
-                                                    placeholder="Enter blog description"
-                                                    className={`form-textarea ${error ? 'error' : ''}`}
-                                                />
-                                                {error && <span className="error-message">{error.message}</span>}
-                                            </>
-                                        )}
-                                    />
-                                </div>
-
-                                {/* Date and Time Row */}
-                                <div className="datetime-row">
-                                    <div className="form-group">
-                                        <label className="form-label">Date *</label>
+                                    <div className="manage-blogs-form-content">
+                                        {/* Hidden field for _id */}
                                         <Controller
-                                            name={`blogs.${index}.date`}
+                                            name={`blogs.${index}._id`}
                                             control={control}
-                                            rules={{ required: 'Date is required' }}
-                                            render={({ field, fieldState: { error } }) => (
-                                                <>
-                                                    <div className="date-input-wrapper">
+                                            render={({ field }) => <input {...field} type="hidden" />}
+                                        />
+
+                                        {/* Header */}
+                                        <div className="manage-blogs-form-group">
+                                            <label className="manage-blogs-form-label">Blog Header *</label>
+                                            <Controller
+                                                name={`blogs.${index}.header`}
+                                                control={control}
+                                                rules={{ required: 'Blog header is required' }}
+                                                render={({ field, fieldState: { error } }) => (
+                                                    <>
                                                         <input
                                                             {...field}
-                                                            type="date"
-                                                            className={`form-input ${error ? 'error' : ''}`}
-                                                            onClick={(e) => e.target.showPicker && e.target.showPicker()}
+                                                            type="text"
+                                                            placeholder="Enter blog header"
+                                                            className={`manage-blogs-form-input ${error ? 'manage-blogs-error' : ''}`}
                                                         />
-                                                    </div>
-                                                    {error && <span className="error-message">{error.message}</span>}
-                                                </>
-                                            )}
-                                        />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="form-label">Time *</label>
-                                        <Controller
-                                            name={`blogs.${index}.time`}
-                                            control={control}
-                                            rules={{ required: 'Time is required' }}
-                                            render={({ field, fieldState: { error } }) => (
-                                                <>
-                                                    <div className="time-input-wrapper">
-                                                        <input
-                                                            {...field}
-                                                            type="time"
-                                                            className={`form-input ${error ? 'error' : ''}`}
-                                                            onClick={(e) => e.target.showPicker && e.target.showPicker()}
-                                                        />
-                                                    </div>
-                                                    {error && <span className="error-message">{error.message}</span>}
-                                                </>
-                                            )}
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Image Upload Section */}
-                                <div className="blog-images-section">
-                                    <label className="form-label">Blog Images</label>
-                                    <div className="image-upload-compact">
-                                        <HiOutlinePhotograph className="upload-icon-tiny" />
-                                        <span className="upload-text-tiny">Add images</span>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            multiple
-                                            style={{ display: 'none' }}
-                                            id={`blog-images-${index}`}
-                                            onChange={(e) => handleImageUpload(e, index)}
-                                        />
-                                        <label htmlFor={`blog-images-${index}`} className="upload-btn-tiny">
-                                            Choose
-                                        </label>
-                                    </div>
-
-                                    {/* Display uploaded images in horizontal scroll */}
-                                    {blogImages[index] && blogImages[index].length > 0 && (
-                                        <div className="blog-images-scroll">
-                                            {blogImages[index].map((image) => (
-                                                <div key={image.id} className="blog-image-thumb">
-                                                    <div
-                                                        className="blog-image-delete-tiny"
-                                                        onClick={() => handleDeleteImage(index, image.id)}
-                                                    >
-                                                        <CgTrash />
-                                                    </div>
-                                                    <img
-                                                        src={image.preview}
-                                                        alt="Blog"
-                                                        className="blog-image-preview-tiny"
-                                                    />
-                                                </div>
-                                            ))}
+                                                        {error && <span className="manage-blogs-error-message">{error.message}</span>}
+                                                    </>
+                                                )}
+                                            />
                                         </div>
-                                    )}
+
+                                        {/* Description */}
+                                        <div className="manage-blogs-form-group">
+                                            <label className="manage-blogs-form-label">Blog Description *</label>
+                                            <Controller
+                                                name={`blogs.${index}.description`}
+                                                control={control}
+                                                rules={{ required: 'Blog description is required' }}
+                                                render={({ field, fieldState: { error } }) => (
+                                                    <>
+                                                        <textarea
+                                                            {...field}
+                                                            rows={4}
+                                                            placeholder="Enter blog description"
+                                                            className={`manage-blogs-form-textarea ${error ? 'manage-blogs-error' : ''}`}
+                                                        />
+                                                        {error && <span className="manage-blogs-error-message">{error.message}</span>}
+                                                    </>
+                                                )}
+                                            />
+                                        </div>
+
+                                        {/* Date and Time Row */}
+                                        <div className="manage-blogs-datetime-row">
+                                            <div className="manage-blogs-form-group">
+                                                <label className="manage-blogs-form-label">Date *</label>
+                                                <Controller
+                                                    name={`blogs.${index}.date`}
+                                                    control={control}
+                                                    rules={{ required: 'Date is required' }}
+                                                    render={({ field, fieldState: { error } }) => (
+                                                        <>
+                                                            <div className="manage-blogs-date-input-wrapper">
+                                                                <input
+                                                                    {...field}
+                                                                    type="date"
+                                                                    className={`manage-blogs-form-input ${error ? 'manage-blogs-error' : ''}`}
+                                                                    onClick={(e) => e.target.showPicker && e.target.showPicker()}
+                                                                />
+                                                            </div>
+                                                            {error && <span className="manage-blogs-error-message">{error.message}</span>}
+                                                        </>
+                                                    )}
+                                                />
+                                            </div>
+
+                                            <div className="manage-blogs-form-group">
+                                                <label className="manage-blogs-form-label">Time *</label>
+                                                <Controller
+                                                    name={`blogs.${index}.time`}
+                                                    control={control}
+                                                    rules={{ required: 'Time is required' }}
+                                                    render={({ field, fieldState: { error } }) => (
+                                                        <>
+                                                            <div className="manage-blogs-time-input-wrapper">
+                                                                <input
+                                                                    {...field}
+                                                                    type="time"
+                                                                    className={`manage-blogs-form-input ${error ? 'manage-blogs-error' : ''}`}
+                                                                    onClick={(e) => e.target.showPicker && e.target.showPicker()}
+                                                                />
+                                                            </div>
+                                                            {error && <span className="manage-blogs-error-message">{error.message}</span>}
+                                                        </>
+                                                    )}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Image Upload Section */}
+                                        <div className="manage-blogs-images-section">
+                                            <label className="manage-blogs-form-label">Blog Images</label>
+                                            <div className="manage-blogs-image-upload-compact">
+                                                <HiOutlinePhotograph className="manage-blogs-upload-icon-tiny" />
+                                                <span className="manage-blogs-upload-text-tiny">Add images</span>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    multiple
+                                                    style={{ display: 'none' }}
+                                                    id={`blog-images-${index}`}
+                                                    onChange={(e) => handleImageUpload(e, index)}
+                                                />
+                                                <label htmlFor={`blog-images-${index}`} className="manage-blogs-upload-btn-tiny">
+                                                    Choose
+                                                </label>
+                                            </div>
+
+                                            {/* Display existing and new images */}
+                                            <Controller
+                                                name={`blogs.${index}.existingImages`}
+                                                control={control}
+                                                render={({ field: { value, onChange } }) => {
+                                                    console.log('Controller value for existingImages:', value);
+                                                    console.log('New images for index', index, ':', blogImages[index]);
+                                                    
+                                                    const hasExistingImages = value && Array.isArray(value) && value.length > 0;
+                                                    const hasNewImages = blogImages[index] && blogImages[index].length > 0;
+                                                    
+                                                    console.log('Has existing images:', hasExistingImages);
+                                                    console.log('Has new images:', hasNewImages);
+                                                    
+                                                    return (
+                                                        <>
+                                                            {(hasExistingImages || hasNewImages) && (
+                                                                <div className="manage-blogs-images-scroll">
+                                                                    {/* Existing images */}
+                                                                    {hasExistingImages && value.map((image, imgIndex) => {
+                                                                        console.log('Rendering existing image:', image);
+                                                                        return (
+                                                                            <div key={`existing-${imgIndex}`} className="manage-blogs-image-thumb">
+                                                                                <div
+                                                                                    className="manage-blogs-image-delete-tiny"
+                                                                                    onClick={() => onChange(handleDeleteExistingImage(index, imgIndex, value))}
+                                                                                >
+                                                                                    <CgTrash />
+                                                                                </div>
+                                                                                <img
+                                                                                    src={`/uploads/blogs/${image.image}`}
+                                                                                    alt="Blog"
+                                                                                    className="manage-blogs-image-preview-tiny"
+                                                                                    onError={(e) => {
+                                                                                        console.error('Image failed to load:', e.target.src);
+                                                                                    }}
+                                                                                />
+                                                                            </div>
+                                                                        );
+                                                                    })}
+
+                                                                    {/* New images */}
+                                                                    {hasNewImages && blogImages[index].map((image) => (
+                                                                        <div key={image.id} className="manage-blogs-image-thumb">
+                                                                            <div
+                                                                                className="manage-blogs-image-delete-tiny"
+                                                                                onClick={() => handleDeleteNewImage(index, image.id)}
+                                                                            >
+                                                                                <CgTrash />
+                                                                            </div>
+                                                                            <img
+                                                                                src={image.preview}
+                                                                                alt="Blog"
+                                                                                className="manage-blogs-image-preview-tiny"
+                                                                            />
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            )}
+                                                        </>
+                                                    );
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                            );
+                        })}
+                    </div>
+                )}
 
                 {/* Action Buttons */}
-                <div className="action-buttons">
+                <div className="manage-blogs-action-buttons">
                     <button
                         type="button"
-                        className="add-blog-btn"
+                        className="manage-blogs-add-btn"
                         onClick={() => append({
                             header: '',
                             description: '',
                             date: '',
                             time: '',
-                            images: []
+                            existingImages: []
                         })}
                     >
                         <MdAdd /> Add Blog
                     </button>
 
-                    <button type="submit" className="submit-btn" disabled={isSubmitting}>
+                    <button type="submit" className="manage-blogs-submit-btn" disabled={isSubmitting}>
                         {isSubmitting ? 'Saving...' : 'Save All Blogs'}
                     </button>
                 </div>
             </form>
-
-            {/* Display Existing Blogs */}
-            {isLoading ? (
-                <div className="loading-section">Loading blogs...</div>
-            ) : existingBlogs.length > 0 ? (
-                <div className="existing-blogs-section">
-                    <h3 className="existing-title">Published Blogs ({existingBlogs.length})</h3>
-                    <div className="existing-blogs-grid">
-                        {existingBlogs.map((blog) => (
-                            <div key={blog._id} className="existing-blog-card">
-                                <div className="existing-blog-delete" onClick={() => handleDeleteBlog(blog._id)}>
-                                    <CgTrash />
-                                </div>
-                                {blog.images && blog.images.length > 0 && (
-                                    <div className="existing-blog-image">
-                                        <img
-                                            src={`/uploads/blogs/${blog.images[0].image}`}
-                                            alt={blog.header}
-                                        />
-                                        {blog.images.length > 1 && (
-                                            <div className="image-count-badge">
-                                                +{blog.images.length - 1}
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                                <div className="existing-blog-content">
-                                    <h4 className="existing-blog-header">{blog.header}</h4>
-                                    <p className="existing-blog-description">{blog.description}</p>
-                                    <div className="existing-blog-meta">
-                                        <span className="blog-date">{new Date(blog.date).toLocaleDateString()}</span>
-                                        <span className="blog-time">{blog.time}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            ) : (
-                <div className="no-blogs-section">No blogs published yet</div>
-            )}
         </div>
     );
 };

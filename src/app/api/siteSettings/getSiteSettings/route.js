@@ -3,9 +3,12 @@ import { NextResponse } from "next/server";
 
 /* Model. */
 import SiteSetting from "@/models/SiteSettings";
+import dbConnect from "@/lib/db";
 
 export async function GET() {
     try {
+
+        await dbConnect()
 
         /* Variable declarations. */
         let resultData = {};

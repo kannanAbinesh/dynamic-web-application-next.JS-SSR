@@ -51,19 +51,16 @@ const ManageAboutUs = (props) => {
             let customizedFormData = {};
             let isNestedStructure = formData[Object.keys(formData)[0]]?.hasOwnProperty('value');
 
-            // Handle basic fields
             ['bannerHeader', 'bannerDescription', 'mainDescription'].forEach(key => {
                 customizedFormData[key] = isNestedStructure ? (formData[key]?.value || '') : (formData[key] || '');
             });
 
-            // Handle cards
             if (formData.cards) {
                 customizedFormData.cards = isNestedStructure ? formData.cards.value : formData.cards;
             }
 
             reset(customizedFormData);
 
-            // Handle banner images
             if (formData.bannerImages) {
                 const images = isNestedStructure ? formData.bannerImages.value : formData.bannerImages;
                 if (Array.isArray(images)) {
@@ -76,7 +73,6 @@ const ManageAboutUs = (props) => {
                 }
             }
 
-            // Handle video
             if (formData.video) {
                 const videoName = isNestedStructure ? formData.video.value : formData.video;
                 if (videoName) {
@@ -184,12 +180,10 @@ const ManageAboutUs = (props) => {
         try {
             const formDataToSend = new FormData();
 
-            // Append text fields
             formDataToSend.append('bannerHeader', data.bannerHeader || '');
             formDataToSend.append('bannerDescription', data.bannerDescription || '');
             formDataToSend.append('mainDescription', data.mainDescription || '');
 
-            // Append banner images
             bannerImages.forEach((image) => {
                 if (image.isNew) {
                     formDataToSend.append('bannerImages', image.file);
@@ -198,14 +192,12 @@ const ManageAboutUs = (props) => {
                 }
             });
 
-            // Append video
             if (videoFile) {
                 formDataToSend.append('video', videoFile);
             } else if (videoPreview) {
                 formDataToSend.append('existingVideo', videoPreview.split('/').pop());
             }
 
-            // Append cards
             formDataToSend.append('cards', JSON.stringify(data.cards));
 
             const response = await fetch('/api/aboutUs/manageAboutUs', {
@@ -241,15 +233,15 @@ const ManageAboutUs = (props) => {
             <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
 
                 {/* Banner Section */}
-                <div className="about-section-card">
-                    <h3 className="section-card-title">Banner Section</h3>
+                <div className="manage-about-us-section-card">
+                    <h3 className="manage-about-us-section-card-title">Banner Section</h3>
 
                     {/* Banner Images Upload */}
-                    <div className="about-form-group">
-                        <label className="about-form-label">Banner Images</label>
-                        <div className="about-image-upload-compact">
-                            <HiOutlinePhotograph className="about-upload-icon-tiny" />
-                            <span className="about-upload-text-tiny">Add banner images</span>
+                    <div className="manage-about-us-form-group">
+                        <label className="manage-about-us-form-label">Banner Images</label>
+                        <div className="manage-about-us-image-upload-compact">
+                            <HiOutlinePhotograph className="manage-about-us-upload-icon-tiny" />
+                            <span className="manage-about-us-upload-text-tiny">Add banner images</span>
                             <input
                                 type="file"
                                 accept="image/*"
@@ -258,18 +250,17 @@ const ManageAboutUs = (props) => {
                                 id="banner-images-upload"
                                 onChange={handleBannerImageUpload}
                             />
-                            <label htmlFor="banner-images-upload" className="about-upload-btn-tiny">
+                            <label htmlFor="banner-images-upload" className="manage-about-us-upload-btn-tiny">
                                 Choose
                             </label>
                         </div>
 
-                        {/* Display uploaded images in horizontal scroll */}
                         {bannerImages.length > 0 && (
-                            <div className="about-images-scroll">
+                            <div className="manage-about-us-images-scroll">
                                 {bannerImages.map((image) => (
-                                    <div key={image.id} className="about-image-thumb">
+                                    <div key={image.id} className="manage-about-us-image-thumb">
                                         <div
-                                            className="about-image-delete-tiny"
+                                            className="manage-about-us-image-delete-tiny"
                                             onClick={() => handleDeleteBannerImage(image.id)}
                                         >
                                             <CgTrash />
@@ -277,7 +268,7 @@ const ManageAboutUs = (props) => {
                                         <img
                                             src={image.preview}
                                             alt="Banner"
-                                            className="about-image-preview-tiny"
+                                            className="manage-about-us-image-preview-tiny"
                                         />
                                     </div>
                                 ))}
@@ -286,7 +277,7 @@ const ManageAboutUs = (props) => {
                     </div>
 
                     {/* Banner Header */}
-                    <div className="about-form-group">
+                    <div className="manage-about-us-form-group">
                         <Controller
                             name="bannerHeader"
                             control={control}
@@ -303,8 +294,8 @@ const ManageAboutUs = (props) => {
                     </div>
 
                     {/* Banner Description */}
-                    <div className="about-form-group">
-                        <label className="about-form-label">Banner Description *</label>
+                    <div className="manage-about-us-form-group">
+                        <label className="manage-about-us-form-label">Banner Description *</label>
                         <Controller
                             name="bannerDescription"
                             control={control}
@@ -315,22 +306,22 @@ const ManageAboutUs = (props) => {
                                         {...field}
                                         rows={3}
                                         placeholder="Enter banner description"
-                                        className={`about-form-textarea ${error ? 'error' : ''}`}
+                                        className={`manage-about-us-form-textarea ${error ? 'manage-about-us-error' : ''}`}
                                     />
-                                    {error && <span className="about-error-message">{error.message}</span>}
+                                    {error && <span className="manage-about-us-error-message">{error.message}</span>}
                                 </>
                             )}
                         />
                     </div>
 
                     {/* Video Upload */}
-                    <div className="about-form-group">
-                        <label className="about-form-label">Banner Video</label>
-                        <div className="about-video-upload-section">
+                    <div className="manage-about-us-form-group">
+                        <label className="manage-about-us-form-label">Banner Video</label>
+                        <div className="manage-about-us-video-upload-section">
                             {videoPreview ? (
-                                <div className="about-video-preview-wrapper">
+                                <div className="manage-about-us-video-preview-wrapper">
                                     <div
-                                        className="about-video-delete"
+                                        className="manage-about-us-video-delete"
                                         onClick={handleDeleteVideo}
                                     >
                                         <CgTrash />
@@ -338,13 +329,13 @@ const ManageAboutUs = (props) => {
                                     <video
                                         src={videoPreview}
                                         controls
-                                        className="about-video-preview"
+                                        className="manage-about-us-video-preview"
                                     />
                                 </div>
                             ) : (
-                                <div className="about-video-upload-placeholder">
-                                    <MdVideoLibrary className="about-video-icon" />
-                                    <span className="about-video-text">Upload banner video</span>
+                                <div className="manage-about-us-video-upload-placeholder">
+                                    <MdVideoLibrary className="manage-about-us-video-icon" />
+                                    <span className="manage-about-us-video-text">Upload banner video</span>
                                     <input
                                         type="file"
                                         accept="video/*"
@@ -352,7 +343,7 @@ const ManageAboutUs = (props) => {
                                         id="video-upload"
                                         onChange={handleVideoUpload}
                                     />
-                                    <label htmlFor="video-upload" className="about-video-upload-btn">
+                                    <label htmlFor="video-upload" className="manage-about-us-video-upload-btn">
                                         Choose Video
                                     </label>
                                 </div>
@@ -362,11 +353,11 @@ const ManageAboutUs = (props) => {
                 </div>
 
                 {/* Main Description Section */}
-                <div className="about-section-card">
-                    <h3 className="section-card-title">Main Content</h3>
+                <div className="manage-about-us-section-card">
+                    <h3 className="manage-about-us-section-card-title">Main Content</h3>
 
-                    <div className="about-form-group">
-                        <label className="about-form-label">Main Description *</label>
+                    <div className="manage-about-us-form-group">
+                        <label className="manage-about-us-form-label">Main Description *</label>
                         <Controller
                             name="mainDescription"
                             control={control}
@@ -377,9 +368,9 @@ const ManageAboutUs = (props) => {
                                         {...field}
                                         rows={8}
                                         placeholder="Enter main description"
-                                        className={`about-form-textarea ${error ? 'error' : ''}`}
+                                        className={`manage-about-us-form-textarea ${error ? 'manage-about-us-error' : ''}`}
                                     />
-                                    {error && <span className="about-error-message">{error.message}</span>}
+                                    {error && <span className="manage-about-us-error-message">{error.message}</span>}
                                 </>
                             )}
                         />
@@ -387,18 +378,31 @@ const ManageAboutUs = (props) => {
                 </div>
 
                 {/* Cards Section */}
-                <div className="about-section-card">
-                    <h3 className="section-card-title">Feature Cards</h3>
+                <div className="manage-about-us-section-card">
+                    <div className="manage-about-us-cards-header">
+                        <h3 className="manage-about-us-section-card-title">Feature Cards</h3>
+                        <button
+                            type="button"
+                            className="manage-about-us-add-card-btn"
+                            onClick={() => append({
+                                header: '',
+                                description: '',
+                                count: ''
+                            })}
+                        >
+                            <MdAdd />
+                        </button>
+                    </div>
 
-                    <div className="about-cards-grid">
+                    <div className="manage-about-us-cards-grid">
                         {fields.map((field, index) => (
-                            <div key={field.id} className="about-card-item">
-                                <div className="about-card-header">
-                                    <h4 className="about-card-number">Card #{index + 1}</h4>
+                            <div key={field.id} className="manage-about-us-card-item">
+                                <div className="manage-about-us-card-header">
+                                    <h4 className="manage-about-us-card-number">Card #{index + 1}</h4>
                                     {fields.length > 1 && (
                                         <button
                                             type="button"
-                                            className="about-remove-card-btn"
+                                            className="manage-about-us-remove-card-btn"
                                             onClick={() => remove(index)}
                                         >
                                             <CgTrash />
@@ -406,10 +410,9 @@ const ManageAboutUs = (props) => {
                                     )}
                                 </div>
 
-                                <div className="about-card-content">
-                                    {/* Card Header */}
-                                    <div className="about-form-group">
-                                        <label className="about-form-label">Card Header *</label>
+                                <div className="manage-about-us-card-content">
+                                    <div className="manage-about-us-form-group">
+                                        <label className="manage-about-us-form-label">Card Header *</label>
                                         <Controller
                                             name={`cards.${index}.header`}
                                             control={control}
@@ -420,17 +423,16 @@ const ManageAboutUs = (props) => {
                                                         {...field}
                                                         type="text"
                                                         placeholder="Enter card header"
-                                                        className={`about-form-input ${error ? 'error' : ''}`}
+                                                        className={`manage-about-us-form-input ${error ? 'manage-about-us-error' : ''}`}
                                                     />
-                                                    {error && <span className="about-error-message">{error.message}</span>}
+                                                    {error && <span className="manage-about-us-error-message">{error.message}</span>}
                                                 </>
                                             )}
                                         />
                                     </div>
 
-                                    {/* Card Description */}
-                                    <div className="about-form-group">
-                                        <label className="about-form-label">Card Description *</label>
+                                    <div className="manage-about-us-form-group">
+                                        <label className="manage-about-us-form-label">Card Description *</label>
                                         <Controller
                                             name={`cards.${index}.description`}
                                             control={control}
@@ -441,17 +443,16 @@ const ManageAboutUs = (props) => {
                                                         {...field}
                                                         rows={3}
                                                         placeholder="Enter card description"
-                                                        className={`about-form-textarea ${error ? 'error' : ''}`}
+                                                        className={`manage-about-us-form-textarea ${error ? 'manage-about-us-error' : ''}`}
                                                     />
-                                                    {error && <span className="about-error-message">{error.message}</span>}
+                                                    {error && <span className="manage-about-us-error-message">{error.message}</span>}
                                                 </>
                                             )}
                                         />
                                     </div>
 
-                                    {/* Card Count */}
-                                    <div className="about-form-group">
-                                        <label className="about-form-label">Count *</label>
+                                    <div className="manage-about-us-form-group">
+                                        <label className="manage-about-us-form-label">Count *</label>
                                         <Controller
                                             name={`cards.${index}.count`}
                                             control={control}
@@ -462,9 +463,9 @@ const ManageAboutUs = (props) => {
                                                         {...field}
                                                         type="text"
                                                         placeholder="Enter count (e.g., 100+)"
-                                                        className={`about-form-input ${error ? 'error' : ''}`}
+                                                        className={`manage-about-us-form-input ${error ? 'manage-about-us-error' : ''}`}
                                                     />
-                                                    {error && <span className="about-error-message">{error.message}</span>}
+                                                    {error && <span className="manage-about-us-error-message">{error.message}</span>}
                                                 </>
                                             )}
                                         />
@@ -473,23 +474,11 @@ const ManageAboutUs = (props) => {
                             </div>
                         ))}
                     </div>
-
-                    <button
-                        type="button"
-                        className="about-add-card-btn"
-                        onClick={() => append({
-                            header: '',
-                            description: '',
-                            count: ''
-                        })}
-                    >
-                        <MdAdd /> Add Card
-                    </button>
                 </div>
 
                 {/* Submit Button */}
-                <div className="about-submit-section">
-                    <button type="submit" className="about-submit-btn" disabled={isSubmitting}>
+                <div className="manage-about-us-submit-section">
+                    <button type="submit" className="manage-about-us-submit-btn" disabled={isSubmitting}>
                         {isSubmitting ? 'Saving...' : 'Save'}
                     </button>
                 </div>

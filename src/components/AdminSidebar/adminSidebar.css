@@ -1,6 +1,3 @@
-/* adminSidebar.css */
-
-/* Sidebar Container */
 .admin-sidebar-container {
     width: 270px;
     height: 100vh;
@@ -18,20 +15,13 @@
 }
 
 [data-theme="dark"] .admin-sidebar-container {
-    background: linear-gradient(180deg, #0f1419 0%, #1a1f2e 50%, #0d1117 100%);
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
-/* Sidebar Header */
 .admin-sidebar-header {
     padding: 24px 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-[data-theme="dark"] .admin-sidebar-header {
-    background: rgba(255, 255, 255, 0.02);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .admin-sidebar-header-link {
@@ -101,7 +91,6 @@
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Sidebar Body */
 .admin-sidebar-body {
     flex: 1;
     display: flex;
@@ -111,29 +100,6 @@
     padding: 15px 10px 10px;
 }
 
-.admin-sidebar-body::-webkit-scrollbar {
-    width: 6px;
-}
-
-.admin-sidebar-body::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-}
-
-.admin-sidebar-body::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-}
-
-.admin-sidebar-body::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-[data-theme="dark"] .admin-sidebar-body::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-/* Sidebar Navigation */
 .admin-sidebar-nav {
     flex: 1;
     display: flex;
@@ -162,20 +128,11 @@
     border-radius: 10px;
 }
 
-[data-theme="dark"] .admin-sidebar-nav-item:hover {
-    background: rgba(255, 255, 255, 0.06);
-}
-
 .admin-sidebar-nav-item-active {
     background: rgba(255, 255, 255, 0.15);
     color: #ffffff;
     font-weight: 600;
     border-radius: 10px;
-}
-
-[data-theme="dark"] .admin-sidebar-nav-item-active {
-    background: rgba(59, 130, 246, 0.15);
-    border-left-color: #3b82f6;
 }
 
 .admin-sidebar-nav-item-active::before {
@@ -200,10 +157,6 @@
     height: 60%;
     background: #ffffff;
     border-radius: 4px 0 0 4px;
-}
-
-[data-theme="dark"] .admin-sidebar-nav-item-active::after {
-    background: #3b82f6;
 }
 
 .admin-sidebar-nav-icon {
@@ -249,8 +202,7 @@
 }
 
 [data-theme="dark"] .admin-sidebar-footer {
-    background: rgba(0, 0, 0, 0.25);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .admin-sidebar-footer-text {
@@ -411,73 +363,27 @@
     }
 }
 
-/* Animations */
-@keyframes admin-slideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
 
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+/* Custom scroll bar. */
+.admin-sidebar-body::-webkit-scrollbar {
+    width: 3px;
 }
 
-.admin-sidebar-nav-item {
-    animation: admin-slideInLeft 0.3s ease;
-    animation-fill-mode: both;
+.admin-sidebar-body::-webkit-scrollbar-track {
+    background: #077a7d;
+    border-radius: 0.75rem;
 }
 
-.admin-sidebar-nav-item:nth-child(1) {
-    animation-delay: 0.05s;
+.admin-sidebar-body::-webkit-scrollbar-thumb {
+    background-color: #c2bfbf;
+    border-radius: 0.75rem;
 }
 
-.admin-sidebar-nav-item:nth-child(2) {
-    animation-delay: 0.1s;
+[data-theme="dark"] .admin-sidebar-body::-webkit-scrollbar-thumb {
+    background: #fffdfd;
 }
 
-.admin-sidebar-nav-item:nth-child(3) {
-    animation-delay: 0.15s;
-}
-
-.admin-sidebar-nav-item:nth-child(4) {
-    animation-delay: 0.2s;
-}
-
-.admin-sidebar-nav-item:nth-child(5) {
-    animation-delay: 0.25s;
-}
-
-.admin-sidebar-nav-item:nth-child(6) {
-    animation-delay: 0.3s;
-}
-
-.admin-sidebar-nav-item:nth-child(7) {
-    animation-delay: 0.35s;
-}
-
-.admin-sidebar-nav-item:nth-child(8) {
-    animation-delay: 0.4s;
-}
-
-/* Accessibility improvements */
-.admin-sidebar-nav-item:focus {
-    outline: 2px solid rgba(255, 255, 255, 0.5);
-    outline-offset: -2px;
-}
-
-.admin-sidebar-mobile-toggle:focus {
-    outline: 2px solid rgba(255, 255, 255, 0.5);
-    outline-offset: 2px;
-}
-
-/* Print styles */
-@media print {
-
-    .admin-sidebar-container,
-    .admin-sidebar-mobile,
-    .admin-sidebar-mobile-toggle {
-        display: none;
-    }
+[data-theme="dark"] .admin-sidebar-body::-webkit-scrollbar-track {
+    background: #171D37;
+    border-radius: 0.75rem;
 }

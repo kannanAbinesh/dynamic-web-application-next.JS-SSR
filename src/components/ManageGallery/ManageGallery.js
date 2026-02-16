@@ -45,7 +45,6 @@ const ManageGallery = () => {
 
         if (files.length === 0) return;
 
-        // Validate each file
         const validFiles = [];
         for (const file of files) {
             if (!file.type.startsWith('image/')) {
@@ -71,7 +70,6 @@ const ManageGallery = () => {
             validFiles.push(file);
         }
 
-        // Create preview for valid files
         validFiles.forEach(file => {
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -85,7 +83,6 @@ const ManageGallery = () => {
             reader.readAsDataURL(file);
         });
 
-        // Reset input
         e.target.value = '';
     };
 
@@ -152,7 +149,6 @@ const ManageGallery = () => {
 
             const formData = new FormData();
 
-            // Append all image files
             images.forEach((image) => {
                 if (image.isNew) {
                     formData.append('images', image.file);
@@ -174,10 +170,7 @@ const ManageGallery = () => {
                     transition: "bounceIn"
                 });
 
-                // Clear new images after successful upload
                 setImages([]);
-
-                // Refresh existing images
                 fetchGalleryImages();
             } else {
                 throw new Error(result.message || 'Failed to upload images');
@@ -201,12 +194,12 @@ const ManageGallery = () => {
 
             <form onSubmit={handleSubmit} noValidate>
                 {/* Image Upload Section */}
-                <div className="upload-section">
-                    <div className="upload-wrapper">
-                        <div className="upload-area">
-                            <HiOutlinePhotograph className="upload-icon" />
-                            <span className="upload-text">Drag and drop images or click to upload</span>
-                            <span className="upload-subtext">Support for multiple images (Max 10MB each)</span>
+                <div className="manage-gallery-upload-section">
+                    <div className="manage-gallery-upload-wrapper">
+                        <div className="manage-gallery-upload-area">
+                            <HiOutlinePhotograph className="manage-gallery-upload-icon" />
+                            <span className="manage-gallery-upload-text">Drag and drop images or click to upload</span>
+                            <span className="manage-gallery-upload-subtext">Support for multiple images (Max 10MB each)</span>
                             <input
                                 type="file"
                                 accept="image/*"
@@ -215,7 +208,7 @@ const ManageGallery = () => {
                                 id="gallery-upload"
                                 onChange={handleImageUpload}
                             />
-                            <label htmlFor="gallery-upload" className="upload-button">
+                            <label htmlFor="gallery-upload" className="manage-gallery-upload-button">
                                 Choose Images
                             </label>
                         </div>
@@ -224,18 +217,18 @@ const ManageGallery = () => {
 
                 {/* Display New Images to Upload */}
                 {images.length > 0 && (
-                    <div className="images-preview-section">
-                        <h3 className="preview-title">New Images to Upload ({images.length})</h3>
-                        <div className="images-grid">
+                    <div className="manage-gallery-images-preview-section">
+                        <h3 className="manage-gallery-preview-title">New Images to Upload ({images.length})</h3>
+                        <div className="manage-gallery-images-grid">
                             {images.map((image) => (
-                                <div key={image.id} className="image-card">
-                                    <div className="image-delete-wrapper" onClick={() => handleDeleteNewImage(image.id)}>
+                                <div key={image.id} className="manage-gallery-image-card">
+                                    <div className="manage-gallery-image-delete-wrapper" onClick={() => handleDeleteNewImage(image.id)}>
                                         <CgTrash color="#ffffff" />
                                     </div>
                                     <img
                                         src={image.preview}
                                         alt="Gallery"
-                                        className="preview-image"
+                                        className="manage-gallery-preview-image"
                                     />
                                 </div>
                             ))}
@@ -245,10 +238,10 @@ const ManageGallery = () => {
 
                 {/* Submit Button */}
                 {images.length > 0 && (
-                    <div className="submit-section">
+                    <div className="manage-gallery-submit-section">
                         <button
                             type="submit"
-                            className="submit-button"
+                            className="manage-gallery-submit-button"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? 'Uploading...' : 'Upload to Gallery'}
@@ -259,20 +252,20 @@ const ManageGallery = () => {
 
             {/* Display Existing Gallery Images */}
             {isLoading ? (
-                <div className="loading-section">Loading gallery images...</div>
+                <div className="manage-gallery-loading-section">Loading gallery images...</div>
             ) : existingImages.length > 0 && (
-                <div className="existing-images-section">
-                    <h3 className="existing-title">Gallery Images ({existingImages.length})</h3>
-                    <div className="images-grid">
+                <div className="manage-gallery-existing-images-section">
+                    <h3 className="manage-gallery-existing-title">Gallery Images ({existingImages.length})</h3>
+                    <div className="manage-gallery-images-grid">
                         {existingImages.map((image) => (
-                            <div key={image._id} className="image-card">
-                                <div className="image-delete-wrapper" onClick={() => handleDeleteExistingImage(image._id)}>
+                            <div key={image._id} className="manage-gallery-image-card">
+                                <div className="manage-gallery-image-delete-wrapper" onClick={() => handleDeleteExistingImage(image._id)}>
                                     <CgTrash color="#ffffff" />
                                 </div>
                                 <img
                                     src={`/uploads/gallery/${image.image}`}
                                     alt="Gallery"
-                                    className="preview-image"
+                                    className="manage-gallery-preview-image"
                                 />
                             </div>
                         ))}

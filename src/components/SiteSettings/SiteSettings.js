@@ -41,7 +41,6 @@ const SiteSettings = (props) => {
     /* To initialize the form values. */
     useEffect(() => {
         if (formData) {
-
             let customizedFormData = {};
             let isNestedStructure = formData[Object.keys(formData)[0]]?.hasOwnProperty('value');
 
@@ -67,15 +66,12 @@ const SiteSettings = (props) => {
                 if (!['logo', 'darkThemeLogo', 'favicon'].includes(key)) formDataToSend.append(key, data[key] || '');
             });
 
-            /* Logo. */
             if (imageFiles.logo) formDataToSend.append('logo', imageFiles.logo);
             else if (data.logo) formDataToSend.append('existingLogo', data.logo);
 
-            /* Dark theme logo. */
             if (imageFiles.darkThemeLogo) formDataToSend.append('darkThemeLogo', imageFiles.darkThemeLogo);
             else if (data.darkThemeLogo) formDataToSend.append('existingDarkThemeLogo', data.darkThemeLogo);
 
-            /* Favicon. */
             if (imageFiles.favicon) formDataToSend.append('favicon', imageFiles.favicon);
             else if (data.favicon) formDataToSend.append('existingFavicon', data.favicon);
 
@@ -98,22 +94,12 @@ const SiteSettings = (props) => {
         if (!file) return;
 
         if (!file.type.startsWith('image/')) {
-            showToast.error('Please select an image file', {
-                duration: 4000,
-                progress: true,
-                position: "bottom-right",
-                transition: "bounceIn"
-            });
+            showToast.error('Please select an image file', { duration: 4000, progress: true, position: "bottom-right", transition: "bounceIn" });
             return;
         }
 
         if (file.size > 5 * 1024 * 1024) {
-            showToast.error('Image must be less than 5MB', {
-                duration: 4000,
-                progress: true,
-                position: "bottom-right",
-                transition: "bounceIn"
-            });
+            showToast.error('Image must be less than 5MB', { duration: 4000, progress: true, position: "bottom-right", transition: "bounceIn" });
             return;
         }
 
@@ -155,24 +141,24 @@ const SiteSettings = (props) => {
             <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
 
                 {/* Image Upload Section */}
-                <div className="settings-section">
-                    <div className="image-grid">
+                <div className="site-settings-section">
+                    <div className="site-settings-image-grid">
 
                         {/* Logo Upload */}
-                        <div className="image-upload-box">
-                            <label className="common-image-upload-label">Logo</label>
-                            <div className="common-image-upload-wrapper">
+                        <div className="site-settings-image-upload-box">
+                            <label className="site-settings-image-upload-label">Logo</label>
+                            <div className="site-settings-image-upload-wrapper">
                                 {logoPreview && (
-                                    <div className="common-site-settings-delete-wrapper" onClick={() => handleImageDelete('logo')}>
+                                    <div className="site-settings-delete-wrapper" onClick={() => handleImageDelete('logo')}>
                                         <CgTrash color="#ffffff" />
                                     </div>
                                 )}
 
-                                <div className="image-display-section">
+                                <div className="site-settings-image-display-section">
                                     {logoPreview ? (
                                         <img
                                             src={logoPreview}
-                                            className="common-image-upload-style"
+                                            className="site-settings-image-upload-style"
                                             onLoad={() => handleImageLoad('logo')}
                                             onError={() => handleImageError('logo')}
                                             style={{ opacity: imageLoaded.logo ? 1 : 0, transition: 'opacity 0.2s ease-in-out' }}
@@ -180,13 +166,13 @@ const SiteSettings = (props) => {
                                         />
                                     ) : (
                                         <>
-                                            <HiOutlinePhotograph className="default-image-icon" />
-                                            <span className="drag-drop-text">Drag and drop the image</span>
+                                            <HiOutlinePhotograph className="site-settings-default-image-icon" />
+                                            <span className="site-settings-drag-drop-text">Drag and drop the image</span>
                                         </>
                                     )}
                                 </div>
 
-                                <div className="common-image-upload-section">
+                                <div className="site-settings-image-upload-section">
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -194,7 +180,7 @@ const SiteSettings = (props) => {
                                         id="logo-upload"
                                         onChange={(e) => handleImageChange(e, 'logo')}
                                     />
-                                    <label htmlFor="logo-upload" className="common-image-upload-inner-content">
+                                    <label htmlFor="logo-upload" className="site-settings-image-upload-inner-content">
                                         Click here to upload
                                     </label>
                                 </div>
@@ -202,20 +188,20 @@ const SiteSettings = (props) => {
                         </div>
 
                         {/* Dark Theme Logo Upload */}
-                        <div className="image-upload-box">
-                            <label className="common-image-upload-label">Dark Theme Logo</label>
-                            <div className="common-image-upload-wrapper">
+                        <div className="site-settings-image-upload-box">
+                            <label className="site-settings-image-upload-label">Dark Theme Logo</label>
+                            <div className="site-settings-image-upload-wrapper">
                                 {darkLogoPreview && (
-                                    <div className="common-site-settings-delete-wrapper" onClick={() => handleImageDelete('darkThemeLogo')}>
+                                    <div className="site-settings-delete-wrapper" onClick={() => handleImageDelete('darkThemeLogo')}>
                                         <CgTrash color="#ffffff" />
                                     </div>
                                 )}
 
-                                <div className="image-display-section">
+                                <div className="site-settings-image-display-section">
                                     {darkLogoPreview ? (
                                         <img
                                             src={darkLogoPreview}
-                                            className="common-image-upload-style"
+                                            className="site-settings-image-upload-style"
                                             onLoad={() => handleImageLoad('darkThemeLogo')}
                                             onError={() => handleImageError('darkThemeLogo')}
                                             style={{ opacity: imageLoaded.darkThemeLogo ? 1 : 0, transition: 'opacity 0.2s ease-in-out' }}
@@ -223,13 +209,13 @@ const SiteSettings = (props) => {
                                         />
                                     ) : (
                                         <>
-                                            <HiOutlinePhotograph className="default-image-icon" />
-                                            <span className="drag-drop-text">Drag and drop the image</span>
+                                            <HiOutlinePhotograph className="site-settings-default-image-icon" />
+                                            <span className="site-settings-drag-drop-text">Drag and drop the image</span>
                                         </>
                                     )}
                                 </div>
 
-                                <div className="common-image-upload-section">
+                                <div className="site-settings-image-upload-section">
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -237,7 +223,7 @@ const SiteSettings = (props) => {
                                         id="darkLogo-upload"
                                         onChange={(e) => handleImageChange(e, 'darkThemeLogo')}
                                     />
-                                    <label htmlFor="darkLogo-upload" className="common-image-upload-inner-content">
+                                    <label htmlFor="darkLogo-upload" className="site-settings-image-upload-inner-content">
                                         Click here to upload
                                     </label>
                                 </div>
@@ -245,20 +231,20 @@ const SiteSettings = (props) => {
                         </div>
 
                         {/* Favicon Upload */}
-                        <div className="image-upload-box">
-                            <label className="common-image-upload-label">Favicon</label>
-                            <div className="common-image-upload-wrapper">
+                        <div className="site-settings-image-upload-box">
+                            <label className="site-settings-image-upload-label">Favicon</label>
+                            <div className="site-settings-image-upload-wrapper">
                                 {faviconPreview && (
-                                    <div className="common-site-settings-delete-wrapper" onClick={() => handleImageDelete('favicon')}>
+                                    <div className="site-settings-delete-wrapper" onClick={() => handleImageDelete('favicon')}>
                                         <CgTrash color="#ffffff" />
                                     </div>
                                 )}
 
-                                <div className="image-display-section">
+                                <div className="site-settings-image-display-section">
                                     {faviconPreview ? (
                                         <img
                                             src={faviconPreview}
-                                            className="common-image-upload-style"
+                                            className="site-settings-image-upload-style"
                                             onLoad={() => handleImageLoad('favicon')}
                                             onError={() => handleImageError('favicon')}
                                             style={{ opacity: imageLoaded.favicon ? 1 : 0, transition: 'opacity 0.2s ease-in-out' }}
@@ -266,13 +252,13 @@ const SiteSettings = (props) => {
                                         />
                                     ) : (
                                         <>
-                                            <HiOutlinePhotograph className="default-image-icon" />
-                                            <span className="drag-drop-text">Drag and drop the image</span>
+                                            <HiOutlinePhotograph className="site-settings-default-image-icon" />
+                                            <span className="site-settings-drag-drop-text">Drag and drop the image</span>
                                         </>
                                     )}
                                 </div>
 
-                                <div className="common-image-upload-section">
+                                <div className="site-settings-image-upload-section">
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -280,7 +266,7 @@ const SiteSettings = (props) => {
                                         id="favicon-upload"
                                         onChange={(e) => handleImageChange(e, 'favicon')}
                                     />
-                                    <label htmlFor="favicon-upload" className="common-image-upload-inner-content">
+                                    <label htmlFor="favicon-upload" className="site-settings-image-upload-inner-content">
                                         Click here to upload
                                     </label>
                                 </div>
@@ -290,9 +276,9 @@ const SiteSettings = (props) => {
                 </div>
 
                 {/* Basic Information Section */}
-                <div className="settings-section">
-                    <div className="form-grid">
-                        <div className="form-group">
+                <div className="site-settings-section">
+                    <div className="site-settings-form-grid">
+                        <div className="site-settings-form-group">
                             <Controller
                                 name="siteName"
                                 control={control}
@@ -301,7 +287,7 @@ const SiteSettings = (props) => {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="site-settings-form-group">
                             <Controller
                                 name="poweredBy"
                                 control={control}
@@ -313,9 +299,9 @@ const SiteSettings = (props) => {
                 </div>
 
                 {/* Social Media Links Section */}
-                <div className="settings-section">
-                    <div className="form-grid">
-                        <div className="form-group">
+                <div className="site-settings-section">
+                    <div className="site-settings-form-grid">
+                        <div className="site-settings-form-group">
                             <Controller
                                 name="mail"
                                 control={control}
@@ -324,7 +310,7 @@ const SiteSettings = (props) => {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="site-settings-form-group">
                             <Controller
                                 name="facebook"
                                 rules={{ required: 'Facebook is required' }}
@@ -333,7 +319,7 @@ const SiteSettings = (props) => {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="site-settings-form-group">
                             <Controller
                                 name="instagram"
                                 control={control}
@@ -342,7 +328,7 @@ const SiteSettings = (props) => {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="site-settings-form-group">
                             <Controller
                                 name="youtube"
                                 control={control}
@@ -351,7 +337,7 @@ const SiteSettings = (props) => {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="site-settings-form-group">
                             <Controller
                                 name="whatsapp"
                                 control={control}
@@ -363,8 +349,8 @@ const SiteSettings = (props) => {
                 </div>
 
                 {/* Submit Button */}
-                <div className="submit-section">
-                    <button type="submit" className="submit-btn" disabled={isSubmitting}>
+                <div className="site-settings-submit-section">
+                    <button type="submit" className="site-settings-submit-btn" disabled={isSubmitting}>
                         {isSubmitting ? 'Saving...' : 'Save'}
                     </button>
                 </div>

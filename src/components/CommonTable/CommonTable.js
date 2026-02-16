@@ -50,7 +50,6 @@ export default function CommonTable(props) {
         debounceSearch(value);
     };
 
-    // Sync input value with URL search params
     useEffect(() => {
         const urlSearch = search;
         setInputValue(urlSearch);

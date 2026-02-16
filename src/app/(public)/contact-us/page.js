@@ -1,7 +1,33 @@
-import ContactUs from "@/components/ContactUs/ContactUs";
+/* Components. */
+import ContactUsClient from "@/components/ContactUs/ContactUs";
+import dbConnect from "@/lib/db";
+import ContactUs from "@/models/ContactUs";
 
-export default function Contact() {
+const ContactUsIndex = async () => {
+    
+    let contactUsData = {};
+
+    try {
+        await dbConnect();
+        
+        const data = await ContactUs.find({}).lean();
+        
+        data.forEach(item => {
+            contactUsData[item.key] = {
+                value: item.value,
+                updatedAt: item.updatedAt
+            };
+        });
+
+    } catch (error) {
+        console.error('Error fetching contact us data:', error);
+    }
+
     return (
-        <ContactUs />
-    )
-}
+        <div>
+            <ContactUsClient data={contactUsData} />
+        </div>
+    );
+};
+
+export default ContactUsIndex;

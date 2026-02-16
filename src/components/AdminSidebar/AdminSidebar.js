@@ -43,8 +43,6 @@ const AdminSidebar = (props) => {
 
     /* Get site settings data */
     const settingsData = siteSettingsData?.data || {};
-
-    // Determine which logo to show based on theme
     const currentLogo = theme === 'dark' ? settingsData.darkThemeLogo : settingsData.logo;
     const siteLogo = currentLogo ? `/uploads/siteSettings/${currentLogo}` : null;
     const siteName = settingsData.siteName || 'Admin Portal';

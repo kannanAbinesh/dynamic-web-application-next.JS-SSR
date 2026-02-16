@@ -1,8 +1,8 @@
-/* Search bar style. */
+/* Common Table Search Bar Container */
 .common-table-search-bar-container {
     font-family: 'Lexend', sans-serif;
     position: relative;
-    background-color: #077a7d;
+    background-color: var(--primary-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -18,10 +18,9 @@
     position: relative;
     display: flex;
     align-items: center;
-    background: #fff;
+    background: var(--primary-background-color);
     color: var(--primary-color);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--field-primary-border-color);
     border-radius: 10px;
     padding: 10px 15px;
     height: 48px;
@@ -44,7 +43,24 @@
     flex-shrink: 0;
 }
 
-/* Table style. */
+.common-table-search-input-field {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--primary-color);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 0;
+}
+
+.common-table-search-input-field::placeholder {
+    font-family: 'LEXEND';
+    color: var(--tertiary-color);
+}
+
+/* Common Table Container */
 .common-table-container {
     max-width: 100%;
     background-color: var(--primary-background-color);
@@ -58,8 +74,7 @@
     border-radius: 8px;
     background-color: var(--primary-background-color);
     box-shadow: 0 15px 15px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e0e4e7;
-    background: #ffffff;
+    border: 1px solid var(--field-primary-border-color);
     vertical-align: middle;
     word-break: break-all;
     min-height: 0.01%;
@@ -76,13 +91,13 @@
 }
 
 .common-table-header-wrapper {
-    background-color: #077a7d;
+    background-color: var(--primary-color);
     border-bottom: none;
 }
 
 .common-table-header {
     padding: 14px 16px;
-    color: #ffffff;
+    color: var(--secondary-color);
     max-width: 450px;
     font-weight: 500;
     word-break: break-all;
@@ -95,7 +110,7 @@
 }
 
 .common-table-row {
-    border-bottom: 1px solid #f0f2f5;
+    border-bottom: 1px solid var(--field-primary-border-color);
     transition: background-color 0.2s ease;
     background-color: var(--primary-background-color);
 }
@@ -105,7 +120,7 @@
 }
 
 .common-table-mail {
-    color: #077a7d;
+    color: var(--primary-color);
     text-decoration: none;
     font-weight: 500;
 }
@@ -129,14 +144,14 @@
 }
 
 .common-table-btn {
-    color: #077a7d;
+    color: var(--primary-color);
     cursor: pointer;
     transition: 14px;
     font-weight: 500;
     display: inline-block;
 }
 
-/* Responsive Design */
+/* Responsive Styles */
 @media screen and (max-width: 1280px) {
     .common-table-wrapper {
         border: none;
@@ -171,7 +186,7 @@
         text-align: right;
         width: 100%;
         font-weight: 400;
-        border-bottom: 1px solid #f0f2f5;
+        border-bottom: 1px solid var(--field-primary-border-color);
     }
 
     .common-table-data:first-child {
@@ -214,21 +229,4 @@
         color: var(--primary-color);
         font-weight: 600;
     }
-}
-
-.common-table-search-input-field {
-    flex: 1;
-    border: none;
-    outline: none;
-    background: transparent;
-    color: var(--primary-color);
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 1.5;
-    padding: 0;
-}
-
-.common-table-search-input-field::placeholder {
-    font-family: 'LEXEND';
-    color: var(--primary-color);
 }

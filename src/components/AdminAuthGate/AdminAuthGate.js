@@ -30,7 +30,7 @@ export default function AdminAuthGate(props) {
 
     useEffect(() => {
         if (data) setChecking(false);
-        if (error) router.replace("/siteadmin/login");
+        if (error) router.replace("/siteadmin/sitesettings");
     }, [data, error, router]);
 
     if (checking || loading) return <Loader />;

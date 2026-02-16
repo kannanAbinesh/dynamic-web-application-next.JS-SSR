@@ -4,7 +4,6 @@
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { showToast } from "nextjs-toast-notify";
-import { useDispatch } from "react-redux";
 import { CgTrash } from "react-icons/cg";
 import { HiOutlinePhotograph } from "react-icons/hi";
 
@@ -27,7 +26,6 @@ const ManageContactUs = (props) => {
     const [imageLoaded, setImageLoaded] = useState({ triangleImage: false, squareImage: false, circleImage: false });
 
     /* Hooks declarations. */
-    const dispatch = useDispatch();
     const { control, handleSubmit, reset, setValue, formState: { isSubmitting } } = useForm({
         defaultValues: {
             header: '',
@@ -47,6 +45,7 @@ const ManageContactUs = (props) => {
             Object.keys(formData).forEach(key => {
                 customizedFormData[key] = isNestedStructure ? (formData[key]?.value || '') : (formData[key] || '');
             });
+
             reset(customizedFormData);
 
             let triangleImageValue = isNestedStructure ? formData.triangleImage?.value : formData.triangleImage;
@@ -64,23 +63,19 @@ const ManageContactUs = (props) => {
         try {
             const formDataToSend = new FormData();
 
-            // Append text fields
             formDataToSend.append('header', data.header || '');
             formDataToSend.append('description', data.description || '');
 
-            /* Triangle Image. */
             if (imageFiles.triangleImage) formDataToSend.append('triangleImage', imageFiles.triangleImage);
             else if (data.triangleImage) formDataToSend.append('existingTriangleImage', data.triangleImage);
 
-            /* Square Image. */
             if (imageFiles.squareImage) formDataToSend.append('squareImage', imageFiles.squareImage);
             else if (data.squareImage) formDataToSend.append('existingSquareImage', data.squareImage);
 
-            /* Circle Image. */
             if (imageFiles.circleImage) formDataToSend.append('circleImage', imageFiles.circleImage);
             else if (data.circleImage) formDataToSend.append('existingCircleImage', data.circleImage);
 
-            const response = await fetch('/api/contactUs/manageContactUs', {
+            const response = await fetch('/api/siteSettings/manage-contact-us', {
                 method: 'POST',
                 body: formDataToSend,
             });
@@ -171,24 +166,24 @@ const ManageContactUs = (props) => {
             <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
 
                 {/* Image Upload Section */}
-                <div className="contact-settings-section">
-                    <div className="contact-image-grid">
+                <div className="manage-contact-us-settings-section">
+                    <div className="manage-contact-us-image-grid">
 
                         {/* Triangle Image Upload */}
-                        <div className="contact-image-upload-box">
-                            <label className="contact-image-upload-label">Triangle Image</label>
-                            <div className="contact-image-upload-wrapper">
+                        <div className="manage-contact-us-image-upload-box">
+                            <label className="manage-contact-us-image-upload-label">Triangle Image</label>
+                            <div className="manage-contact-us-image-upload-wrapper">
                                 {triangleImagePreview && (
-                                    <div className="contact-image-delete-wrapper" onClick={() => handleImageDelete('triangleImage')}>
+                                    <div className="manage-contact-us-image-delete-wrapper" onClick={() => handleImageDelete('triangleImage')}>
                                         <CgTrash color="#ffffff" />
                                     </div>
                                 )}
 
-                                <div className="contact-image-display-section">
+                                <div className="manage-contact-us-image-display-section">
                                     {triangleImagePreview ? (
                                         <img
                                             src={triangleImagePreview}
-                                            className="contact-image-upload-style"
+                                            className="manage-contact-us-image-upload-style"
                                             onLoad={() => handleImageLoad('triangleImage')}
                                             onError={() => handleImageError('triangleImage')}
                                             style={{ opacity: imageLoaded.triangleImage ? 1 : 0, transition: 'opacity 0.2s ease-in-out' }}
@@ -196,13 +191,13 @@ const ManageContactUs = (props) => {
                                         />
                                     ) : (
                                         <>
-                                            <HiOutlinePhotograph className="contact-default-image-icon" />
-                                            <span className="contact-drag-drop-text">Drag and drop the image</span>
+                                            <HiOutlinePhotograph className="manage-contact-us-default-image-icon" />
+                                            <span className="manage-contact-us-drag-drop-text">Drag and drop the image</span>
                                         </>
                                     )}
                                 </div>
 
-                                <div className="contact-image-upload-section">
+                                <div className="manage-contact-us-image-upload-section">
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -210,7 +205,7 @@ const ManageContactUs = (props) => {
                                         id="triangle-upload"
                                         onChange={(e) => handleImageChange(e, 'triangleImage')}
                                     />
-                                    <label htmlFor="triangle-upload" className="contact-image-upload-inner-content">
+                                    <label htmlFor="triangle-upload" className="manage-contact-us-image-upload-inner-content">
                                         Click here to upload
                                     </label>
                                 </div>
@@ -218,20 +213,20 @@ const ManageContactUs = (props) => {
                         </div>
 
                         {/* Square Image Upload */}
-                        <div className="contact-image-upload-box">
-                            <label className="contact-image-upload-label">Square Image</label>
-                            <div className="contact-image-upload-wrapper">
+                        <div className="manage-contact-us-image-upload-box">
+                            <label className="manage-contact-us-image-upload-label">Square Image</label>
+                            <div className="manage-contact-us-image-upload-wrapper">
                                 {squareImagePreview && (
-                                    <div className="contact-image-delete-wrapper" onClick={() => handleImageDelete('squareImage')}>
+                                    <div className="manage-contact-us-image-delete-wrapper" onClick={() => handleImageDelete('squareImage')}>
                                         <CgTrash color="#ffffff" />
                                     </div>
                                 )}
 
-                                <div className="contact-image-display-section">
+                                <div className="manage-contact-us-image-display-section">
                                     {squareImagePreview ? (
                                         <img
                                             src={squareImagePreview}
-                                            className="contact-image-upload-style"
+                                            className="manage-contact-us-image-upload-style"
                                             onLoad={() => handleImageLoad('squareImage')}
                                             onError={() => handleImageError('squareImage')}
                                             style={{ opacity: imageLoaded.squareImage ? 1 : 0, transition: 'opacity 0.2s ease-in-out' }}
@@ -239,13 +234,13 @@ const ManageContactUs = (props) => {
                                         />
                                     ) : (
                                         <>
-                                            <HiOutlinePhotograph className="contact-default-image-icon" />
-                                            <span className="contact-drag-drop-text">Drag and drop the image</span>
+                                            <HiOutlinePhotograph className="manage-contact-us-default-image-icon" />
+                                            <span className="manage-contact-us-drag-drop-text">Drag and drop the image</span>
                                         </>
                                     )}
                                 </div>
 
-                                <div className="contact-image-upload-section">
+                                <div className="manage-contact-us-image-upload-section">
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -253,7 +248,7 @@ const ManageContactUs = (props) => {
                                         id="square-upload"
                                         onChange={(e) => handleImageChange(e, 'squareImage')}
                                     />
-                                    <label htmlFor="square-upload" className="contact-image-upload-inner-content">
+                                    <label htmlFor="square-upload" className="manage-contact-us-image-upload-inner-content">
                                         Click here to upload
                                     </label>
                                 </div>
@@ -261,20 +256,20 @@ const ManageContactUs = (props) => {
                         </div>
 
                         {/* Circle Image Upload */}
-                        <div className="contact-image-upload-box">
-                            <label className="contact-image-upload-label">Circle Image</label>
-                            <div className="contact-image-upload-wrapper">
+                        <div className="manage-contact-us-image-upload-box">
+                            <label className="manage-contact-us-image-upload-label">Circle Image</label>
+                            <div className="manage-contact-us-image-upload-wrapper">
                                 {circleImagePreview && (
-                                    <div className="contact-image-delete-wrapper" onClick={() => handleImageDelete('circleImage')}>
+                                    <div className="manage-contact-us-image-delete-wrapper" onClick={() => handleImageDelete('circleImage')}>
                                         <CgTrash color="#ffffff" />
                                     </div>
                                 )}
 
-                                <div className="contact-image-display-section">
+                                <div className="manage-contact-us-image-display-section">
                                     {circleImagePreview ? (
                                         <img
                                             src={circleImagePreview}
-                                            className="contact-image-upload-style"
+                                            className="manage-contact-us-image-upload-style"
                                             onLoad={() => handleImageLoad('circleImage')}
                                             onError={() => handleImageError('circleImage')}
                                             style={{ opacity: imageLoaded.circleImage ? 1 : 0, transition: 'opacity 0.2s ease-in-out' }}
@@ -282,13 +277,13 @@ const ManageContactUs = (props) => {
                                         />
                                     ) : (
                                         <>
-                                            <HiOutlinePhotograph className="contact-default-image-icon" />
-                                            <span className="contact-drag-drop-text">Drag and drop the image</span>
+                                            <HiOutlinePhotograph className="manage-contact-us-default-image-icon" />
+                                            <span className="manage-contact-us-drag-drop-text">Drag and drop the image</span>
                                         </>
                                     )}
                                 </div>
 
-                                <div className="contact-image-upload-section">
+                                <div className="manage-contact-us-image-upload-section">
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -296,7 +291,7 @@ const ManageContactUs = (props) => {
                                         id="circle-upload"
                                         onChange={(e) => handleImageChange(e, 'circleImage')}
                                     />
-                                    <label htmlFor="circle-upload" className="contact-image-upload-inner-content">
+                                    <label htmlFor="circle-upload" className="manage-contact-us-image-upload-inner-content">
                                         Click here to upload
                                     </label>
                                 </div>
@@ -306,9 +301,9 @@ const ManageContactUs = (props) => {
                 </div>
 
                 {/* Header and Description Section */}
-                <div className="contact-settings-section">
-                    <div className="contact-form-grid">
-                        <div className="contact-form-group full-width">
+                <div className="manage-contact-us-settings-section">
+                    <div className="manage-contact-us-form-grid">
+                        <div className="manage-contact-us-form-group manage-contact-us-full-width">
                             <Controller
                                 name="header"
                                 control={control}
@@ -324,8 +319,8 @@ const ManageContactUs = (props) => {
                             />
                         </div>
 
-                        <div className="contact-form-group full-width">
-                            <label className="contact-form-label">Page Description *</label>
+                        <div className="manage-contact-us-form-group manage-contact-us-full-width">
+                            <label className="manage-contact-us-form-label">Page Description *</label>
                             <Controller
                                 name="description"
                                 control={control}
@@ -336,9 +331,9 @@ const ManageContactUs = (props) => {
                                             {...field}
                                             rows={8}
                                             placeholder="Enter contact us page description"
-                                            className={`contact-form-textarea ${error ? 'error' : ''}`}
+                                            className={`manage-contact-us-form-textarea ${error ? 'manage-contact-us-error' : ''}`}
                                         />
-                                        {error && <span className="contact-error-message">{error.message}</span>}
+                                        {error && <span className="manage-contact-us-error-message">{error.message}</span>}
                                     </>
                                 )}
                             />
@@ -347,8 +342,8 @@ const ManageContactUs = (props) => {
                 </div>
 
                 {/* Submit Button */}
-                <div className="contact-submit-section">
-                    <button type="submit" className="contact-submit-btn" disabled={isSubmitting}>
+                <div className="manage-contact-us-submit-section">
+                    <button type="submit" className="manage-contact-us-submit-btn" disabled={isSubmitting}>
                         {isSubmitting ? 'Saving...' : 'Save'}
                     </button>
                 </div>

@@ -10,10 +10,10 @@ export default function CommonInputField(props) {
     const { error } = fieldState;
 
     return (
-        <div className="input-container">
-            {label && (<label className='form-input-label'>{label}</label>)}
-            <input {...field} {...customProps} className="form-input" />
-            {error && (<span className="error-message">{error.message}</span>)}
+        <div className="common-input-container">
+            {label && (<label className='common-input-form-label'>{label}</label>)}
+            <input {...field} {...customProps} className={`common-input-form-input ${error ? 'common-input-error' : ''}`} />
+            {error && (<span className="common-input-error-message">{error.message}</span>)}
         </div>
     );
 };

@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+/* Plugins. */
+import mongoose from "mongoose";
 
 const gallerySchema = new mongoose.Schema({
 
