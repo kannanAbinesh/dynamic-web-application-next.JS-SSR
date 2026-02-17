@@ -200,7 +200,7 @@ const ManageAboutUs = (props) => {
 
             formDataToSend.append('cards', JSON.stringify(data.cards));
 
-            const response = await fetch('/api/aboutUs/manageAboutUs', {
+            const response = await fetch('/api/siteSettings/manage-about-us', {
                 method: 'POST',
                 body: formDataToSend,
             });

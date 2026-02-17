@@ -23,8 +23,9 @@ export async function POST(req) {
         const blogsData = [];
         let blogIndex = 0;
 
-        // Parse all blogs from formData
+        /* Parse all blogs from formData */
         while (formData.has(`blogs[${blogIndex}][header]`)) {
+            const _id = formData.get(`blogs[${blogIndex}][_id]`);
             const header = formData.get(`blogs[${blogIndex}][header]`);
             const description = formData.get(`blogs[${blogIndex}][description]`);
             const date = formData.get(`blogs[${blogIndex}][date]`);
@@ -32,11 +33,11 @@ export async function POST(req) {
 
             if (header && description && date && time) {
                 blogsData.push({
+                    _id: _id || null,
                     header,
                     description,
                     date: new Date(date),
                     time,
-                    images: [],
                     formDataIndex: blogIndex
                 });
             }
@@ -44,32 +45,82 @@ export async function POST(req) {
             blogIndex++;
         }
 
-        // Save blogs and their images
         const savedBlogs = [];
 
         for (const blogData of blogsData) {
-            // Create the blog entry
-            const newBlog = await Blog.create({
-                header: blogData.header,
-                description: blogData.description,
-                date: blogData.date,
-                time: blogData.time,
-                createdAt: new Date()
-            });
 
-            // Handle images for this blog
-            const imageKeys = [];
-            formData.forEach((value, key) => {
-                if (key.startsWith(`blogs[${blogData.formDataIndex}][images]`)) {
-                    imageKeys.push(key);
+            let blogDoc;
+
+            /* UPDATE existing blog if _id provided, else CREATE new */
+            if (blogData._id && blogData._id !== '') {
+                blogDoc = await Blog.findByIdAndUpdate(
+                    blogData._id,
+                    {
+                        header: blogData.header,
+                        description: blogData.description,
+                        date: blogData.date,
+                        time: blogData.time,
+                        updatedAt: new Date()
+                    },
+                    { new: true }
+                );
+
+                /* If blog not found by _id, create new */
+                if (!blogDoc) {
+                    blogDoc = await Blog.create({
+                        header: blogData.header,
+                        description: blogData.description,
+                        date: blogData.date,
+                        time: blogData.time,
+                        createdAt: new Date()
+                    });
                 }
-            });
+            } else {
+                /* Create new blog */
+                blogDoc = await Blog.create({
+                    header: blogData.header,
+                    description: blogData.description,
+                    date: blogData.date,
+                    time: blogData.time,
+                    createdAt: new Date()
+                });
+            }
+
+            /* Handle existing images - keep track of what's retained */
+            const existingImageKeys = [];
+            let existingImgIndex = 0;
+
+            while (formData.has(`blogs[${blogData.formDataIndex}][existingImages][${existingImgIndex}]`)) {
+                const imageName = formData.get(`blogs[${blogData.formDataIndex}][existingImages][${existingImgIndex}]`);
+                if (imageName) existingImageKeys.push(imageName);
+                existingImgIndex++;
+            }
+
+            /* If existing blog, delete images that were removed by user */
+            if (blogData._id && blogData._id !== '') {
+                const allExistingImages = await BlogImages.find({ blogId: blogDoc._id });
+
+                for (const imgDoc of allExistingImages) {
+                    if (!existingImageKeys.includes(imgDoc.image)) {
+                        /* Delete file from disk */
+                        const imagePath = path.join(uploadDir, imgDoc.image);
+                        if (fs.existsSync(imagePath)) {
+                            await unlink(imagePath).catch(err => console.error('Error deleting file:', err));
+                        }
+                        /* Delete from DB */
+                        await BlogImages.findByIdAndDelete(imgDoc._id);
+                    }
+                }
+            }
+
+            /* Handle NEW image uploads - getAll fixes the duplicate issue */
+            const newImageFiles = formData.getAll(`blogs[${blogData.formDataIndex}][images]`);
+
+            console.log(`Blog ${blogData.formDataIndex} - new image files found:`, newImageFiles.length);
 
             const savedImages = [];
 
-            for (const key of imageKeys) {
-                const file = formData.get(key);
-
+            for (const file of newImageFiles) {
                 if (file && file instanceof File && file.size > 0) {
                     const bytes = await file.arrayBuffer();
                     const buffer = Buffer.from(bytes);
@@ -77,31 +128,32 @@ export async function POST(req) {
                     const timestamp = Date.now();
                     const randomSuffix = Math.floor(Math.random() * 10000);
                     const fileExtension = file.name.split('.').pop();
-                    const fileName = `blog_${newBlog._id}_${timestamp}_${randomSuffix}.${fileExtension}`;
+                    const fileName = `blog_${blogDoc._id}_${timestamp}_${randomSuffix}.${fileExtension}`;
                     const filePath = path.join(uploadDir, fileName);
 
                     await writeFile(filePath, buffer);
 
-                    // Save image reference in BlogImages collection
+                    /* Save image reference in BlogImages collection */
                     const blogImage = await BlogImages.create({
-                        blogId: newBlog._id,
+                        blogId: blogDoc._id,
                         image: fileName,
                         createdAt: new Date()
                     });
 
+                    console.log('Saved blog image:', blogImage);
                     savedImages.push(blogImage);
                 }
             }
 
             savedBlogs.push({
-                blog: newBlog,
+                blog: blogDoc,
                 images: savedImages
             });
         }
 
         return NextResponse.json({
             success: true,
-            message: `${savedBlogs.length} blog(s) created successfully`,
+            message: `${savedBlogs.length} blog(s) saved successfully`,
             blogs: savedBlogs
         }, { status: 200 });
 

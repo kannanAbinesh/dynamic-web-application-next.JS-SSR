@@ -94,7 +94,6 @@
     background: var(--primary-background-color);
     color: var(--primary-color);
     width: 100%;
-    cursor: pointer;
 }
 
 .manage-blogs-form-input:focus {

@@ -14,7 +14,7 @@ export default async function ManageBlogsIndex() {
             },
             {
                 $lookup: {
-                    from: "blogimages", // MongoDB collection names are lowercase by default
+                    from: "BlogImages", // MongoDB collection names are lowercase by default
                     localField: "_id",
                     foreignField: "blogId",
                     as: "images",

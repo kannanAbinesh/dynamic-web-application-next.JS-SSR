@@ -24,7 +24,7 @@ export async function POST(req) {
         await newQuery.save();
 
         return NextResponse.json(
-            { message: 'Queries sent. We will get back to you soon!' }, 
+            { message: 'Queries sent' }, 
             { status: 200 }
         );
 

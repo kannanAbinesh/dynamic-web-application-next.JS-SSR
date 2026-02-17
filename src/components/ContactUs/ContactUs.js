@@ -57,7 +57,7 @@ const ContactUs = ({ data = {} }) => {
 
             const result = await response.json();
 
-            if (result.success) {
+            if (Number(response.status) === 200) {
                 showToast.success('Message sent successfully!', {
                     duration: 4000,
                     progress: true,
@@ -65,11 +65,10 @@ const ContactUs = ({ data = {} }) => {
                     transition: "bounceIn"
                 });
                 reset();
-            } else {
-                throw new Error(result.message || 'Failed to send message');
-            }
+            };
 
         } catch (error) {
+            console.log(error)
             showToast.error(error?.message || 'Something went wrong!', {
                 duration: 4000,
                 progress: true,

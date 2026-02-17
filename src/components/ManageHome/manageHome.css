@@ -1,0 +1,370 @@
+/* Manage Home - Admin Panel */
+.manage-home-container {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* ── Section Card ── */
+.manage-home-section-card {
+    background: var(--secondary-background-color);
+    border: 1px solid var(--field-primary-border-color);
+    border-radius: 12px;
+    padding: 28px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.manage-home-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0 0 4px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--field-primary-border-color);
+    letter-spacing: 0.3px;
+}
+
+/* ── Form Groups ── */
+.manage-home-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.manage-home-form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tertiary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.manage-home-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* ── Inputs ── */
+.manage-home-input {
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 14px;
+    color: var(--primary-color);
+    background: var(--primary-background-color);
+    border: 1px solid var(--field-primary-border-color);
+    border-radius: 8px;
+    font-family: 'LEXEND';
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+
+.manage-home-input:focus {
+    outline: none;
+    border-color: #36daef;
+    box-shadow: 0 0 0 3px rgba(54, 218, 239, 0.1);
+}
+
+.manage-home-input-error {
+    border-color: #e74c3c !important;
+}
+
+.manage-home-textarea {
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 14px;
+    color: var(--primary-color);
+    background: var(--primary-background-color);
+    border: 1px solid var(--field-primary-border-color);
+    border-radius: 8px;
+    font-family: 'LEXEND';
+    resize: vertical;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+    line-height: 1.6;
+}
+
+.manage-home-textarea:focus {
+    outline: none;
+    border-color: #36daef;
+    box-shadow: 0 0 0 3px rgba(54, 218, 239, 0.1);
+}
+
+.manage-home-error {
+    font-size: 12px;
+    color: #e74c3c;
+}
+
+/* ── Image Upload Strip ── */
+.manage-home-upload-strip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--primary-background-color);
+    border: 1.5px dashed var(--field-primary-border-color);
+    border-radius: 8px;
+    cursor: default;
+}
+
+.manage-home-upload-icon {
+    font-size: 22px;
+    color: var(--tertiary-color);
+    flex-shrink: 0;
+}
+
+.manage-home-upload-text {
+    font-size: 13px;
+    color: var(--tertiary-color);
+    flex: 1;
+}
+
+.manage-home-upload-btn {
+    padding: 7px 18px;
+    background: #36daef;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+}
+
+.manage-home-upload-btn:hover {
+    background: #2bc4d8;
+}
+
+/* ── Image Thumbnails Scroll ── */
+.manage-home-images-scroll {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.manage-home-thumb {
+    position: relative;
+    width: 84px;
+    height: 84px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1.5px solid var(--field-primary-border-color);
+    flex-shrink: 0;
+}
+
+.manage-home-thumb-delete {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    background: rgba(0, 0, 0, 0.65);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #ffffff;
+    font-size: 12px;
+    z-index: 2;
+    transition: background 0.2s ease;
+}
+
+.manage-home-thumb-delete:hover {
+    background: #e74c3c;
+}
+
+.manage-home-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ── Array Header (add button row) ── */
+.manage-home-array-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+
+.manage-home-add-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    background: transparent;
+    border: 1.5px solid #36daef;
+    color: #36daef;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.manage-home-add-btn:hover {
+    background: #36daef;
+    color: #ffffff;
+}
+
+/* ── Array Cards Grid ── */
+.manage-home-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.manage-home-array-card {
+    background: var(--primary-background-color);
+    border: 1px solid var(--field-primary-border-color);
+    border-radius: 10px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.manage-home-array-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.manage-home-array-card-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #36daef;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.manage-home-remove-btn {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    border-radius: 6px;
+    color: #e74c3c;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.manage-home-remove-btn:hover {
+    background: #e74c3c;
+    color: #ffffff;
+    border-color: #e74c3c;
+}
+
+/* ── CTA Image ── */
+.manage-home-cta-image-wrapper {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.manage-home-cta-preview {
+    position: relative;
+    height: 180px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--field-primary-border-color);
+}
+
+.manage-home-cta-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.manage-home-cta-delete {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 34px;
+    height: 34px;
+    background: rgba(0, 0, 0, 0.65);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #ffffff;
+    font-size: 16px;
+    transition: background 0.2s ease;
+}
+
+.manage-home-cta-delete:hover {
+    background: #e74c3c;
+}
+
+/* ── Submit ── */
+.manage-home-submit-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 0 24px;
+}
+
+.manage-home-submit-btn {
+    padding: 13px 48px;
+    background: #36daef;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 0.5px;
+}
+
+.manage-home-submit-btn:hover {
+    background: #2bc4d8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(54, 218, 239, 0.35);
+}
+
+.manage-home-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .manage-home-section-card {
+        padding: 20px;
+    }
+
+    .manage-home-row {
+        grid-template-columns: 1fr;
+    }
+
+    .manage-home-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .manage-home-section-card {
+        padding: 16px;
+    }
+
+    .manage-home-submit-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .manage-home-submit-row {
+        justify-content: stretch;
+    }
+}
